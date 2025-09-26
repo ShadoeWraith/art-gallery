@@ -47,6 +47,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"amplify-adapter": "^1.2.3",
 		"embla-carousel-autoplay": "^8.6.0",
 		"embla-carousel-fade": "^8.6.0"
 	}
