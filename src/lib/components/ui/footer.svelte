@@ -6,7 +6,7 @@
 </script>
 
 <footer class="w-full border-t-2 border-stone-400 bg-stone-300">
-	<div class="m-auto grid grid-cols-2 py-8 md:mx-24 md:grid-cols-4">
+	<div class="m-auto grid grid-cols-1 py-8 md:mx-24 md:grid-cols-4">
 		<div class="flex flex-col gap-4 border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
 			<h5 class="mb-2 font-semibold">Shop</h5>
 			<a href="shop" class="group relative">
@@ -43,7 +43,7 @@
 				></span>
 			</a>
 		</div>
-		<div class="flex flex-col gap-4 border-r-2 border-stone-400 px-4 py-2">
+		<div class="flex flex-col gap-4 border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
 			<h5 class="mb-2 font-semibold">Contact</h5>
 			<a href="contact" class="font-semibold underline underline-offset-4">email@email.com</a>
 			<div class="flex flex-col">

@@ -80,11 +80,8 @@
 	</div>
 
 	<div class="bg-stone-300 py-8">
-		<div class="grid grid-cols-1 gap-12 md:mx-48 md:grid-cols-3">
-			<a
-				href="/shop/1"
-				class="m-auto w-fit border-b-2 border-stone-400 md:border-x-2 md:border-y-0"
-			>
+		<div class="grid grid-cols-1 md:mx-48 md:grid-cols-3">
+			<a href="/shop/1" class="m-auto w-full border-b-2 border-stone-400 md:border-y-0">
 				<img src={cigarGirl} alt="" class="m-auto h-96" />
 
 				<div class="m-auto w-96 px-4 pt-2">
@@ -94,7 +91,7 @@
 			</a>
 			<a
 				href="/shop/2"
-				class="m-auto w-fit border-b-2 border-stone-400 md:border-x-2 md:border-y-0"
+				class="m-auto w-full border-b-2 border-stone-400 md:border-x-2 md:border-y-0"
 			>
 				<img src={lion} alt="" class="m-auto h-96" />
 
@@ -103,10 +100,7 @@
 					<h3 class="text-2xl">Artist's Name</h3>
 				</div>
 			</a>
-			<a
-				href="/shop/3"
-				class="m-auto w-fit border-b-2 border-stone-400 md:border-x-2 md:border-y-0"
-			>
+			<a href="/shop/3" class="m-auto w-full border-b-2 border-stone-400 md:border-y-0">
 				<img src={birds} alt="" class="m-auto h-96" />
 
 				<div class="m-auto w-96 px-4 pt-2">
