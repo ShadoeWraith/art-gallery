@@ -4,7 +4,7 @@
 </script>
 
 <section class="w-full">
-	<div class="my-8 flex bg-stone-300 py-8">
+	<div class="my-8 flex flex-col gap-24 bg-stone-300 py-8">
 		<div class="w-full px-12 md:m-24 md:w-1/3">
 			<div class="m-auto border-b-2 border-stone-400 md:border-y-0">
 				<img src={girl} alt="" class="borderimg frame-1 m-auto md:w-full" />
