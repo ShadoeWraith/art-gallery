@@ -48,7 +48,10 @@
 	},
 	"dependencies": {
 		"amplify-adapter": "^1.2.3",
+		"aws-sdk": "^2.1692.0",
+		"client-dynamodb": "github:aws-sdk/client-dynamodb",
 		"embla-carousel-autoplay": "^8.6.0",
-		"embla-carousel-fade": "^8.6.0"
+		"embla-carousel-fade": "^8.6.0",
+		"lib-dynamodb": "github:aws-sdk/lib-dynamodb"
 	}
 }
