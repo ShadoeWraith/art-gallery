@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 export async function GET({ params, url }: { params: { path: string | string[] }; url: URL }) {
 	const pathSegments = Array.isArray(params.path) ? params.path : [params.path];
 	const query = url.searchParams.toString();
