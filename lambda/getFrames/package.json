@@ -1,0 +1,16 @@
+{
+	"name": "getframes",
+	"version": "1.0.0",
+	"description": "",
+	"license": "ISC",
+	"author": "",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"client-dynamodb": "github:aws-sdk/client-dynamodb",
+		"lib-dynamodb": "github:aws-sdk/lib-dynamodb"
+	}
+}

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import Icon from '@iconify/svelte';
+	import { onMount } from 'svelte';
 
-	import girl from '$lib/assets/77.jpg';
-	import cigarGirl from '$lib/assets/0.jpg';
-	import lion from '$lib/assets/24.jpg';
-	import birds from '$lib/assets/29.jpg';
-	import horse from '$lib/assets/76.jpg';
-	import people from '$lib/assets/114.jpg';
-	import turtle from '$lib/assets/31.jpg';
-	import boats from '$lib/assets/63.jpg';
+	let artwork: any = $state([]);
+
+	onMount(async () => {
+		const res = await fetch('/api/proxy/images');
+		const json = await res.json();
+		artwork = json.Items;
+	});
 
 	let colors = $state([
 		{ label: 'Red', color: 'bg-red-500' },
@@ -23,16 +23,6 @@
 		{ label: 'Black', color: 'bg-black' }
 	]);
 	let sizes = $state(['22x29', '34x45', '46x60']);
-	let artwork = $state([
-		{ id: 1, image: girl, artist: 'Name', title: 'Title' },
-		{ id: 2, image: cigarGirl, artist: 'Name', title: 'Title' },
-		{ id: 3, image: lion, artist: 'Name', title: 'Title' },
-		{ id: 4, image: birds, artist: 'Name', title: 'Title' },
-		{ id: 5, image: horse, artist: 'Name', title: 'Title' },
-		{ id: 6, image: people, artist: 'Name', title: 'Title' },
-		{ id: 7, image: turtle, artist: 'Name', title: 'Title' },
-		{ id: 8, image: boats, artist: 'Name', title: 'Title' }
-	]);
 </script>
 
 <section>
@@ -40,7 +30,7 @@
 		<h1 class="w-full text-center text-4xl">Shop</h1>
 	</div>
 	<div class="grid grid-cols-12">
-		<div class="col-span-2 hidden flex-col border-r-2 border-stone-400 md:flex">
+		<div class="col-span-2 hidden flex-col border-r-2 border-stone-400 lg:flex">
 			<Collapsible.Root open>
 				<Collapsible.Trigger class="w-full">
 					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
@@ -82,20 +72,22 @@
 			</Collapsible.Root>
 		</div>
 		<div
-			class="col-span-12 grid grid-cols-1 border-r-2 border-stone-400 md:col-span-10 md:grid-cols-2 lg:grid-cols-4"
+			class="col-span-12 grid grid-cols-1 border-r-2 border-stone-400 md:grid-cols-3 lg:col-span-10 lg:grid-cols-4"
 		>
-			{#each artwork as art}
-				<a href={`shop/${art.id}`} class="w-full border-r-2 border-b-2 border-stone-400 py-8">
-					<div class="h-80 px-8">
-						<img src={art.image} alt="" class="m-auto h-80 object-fill" />
-					</div>
+			{#if artwork}
+				{#each artwork as art}
+					<a href={`shop/${art.id}`} class="w-full border-r-2 border-b-2 border-stone-400 py-8">
+						<div class="h-80 px-8">
+							<img src={art.imageUrl} alt="" class="m-auto h-80 object-contain" />
+						</div>
 
-					<div class="m-auto w-full px-4 pt-2">
-						<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
-						<h3 class="text-2xl">{art.title}</h3>
-					</div>
-				</a>
-			{/each}
+						<div class="m-auto w-full px-4 pt-2">
+							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
+							<h3 class="text-2xl">{art.title}</h3>
+						</div>
+					</a>
+				{/each}
+			{/if}
 		</div>
 	</div>
 </section>

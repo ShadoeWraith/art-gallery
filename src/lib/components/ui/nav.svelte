@@ -4,19 +4,19 @@
 	let isOpen = $state(false);
 
 	let navOptions = [
-		{ label: 'Shop', href: 'shop' },
-		{ label: 'Artists', href: 'artists' },
-		{ label: 'Collections', href: 'collections' },
-		{ label: 'News', href: 'news' },
-		{ label: 'About Us', href: 'about' },
-		{ label: 'Contact', href: 'contact' }
+		{ label: 'Shop', href: '/shop' },
+		{ label: 'Artists', href: '/artists' },
+		{ label: 'Collections', href: '/collections' },
+		{ label: 'News', href: '/news' },
+		{ label: 'About Us', href: '/about' },
+		{ label: 'Contact', href: '/contact' }
 	];
 
 	let navSocials = [
-		{ icon: 'mdi:facebook', href: 'facebook' },
-		{ icon: 'mdi:instagram', href: 'instagram' },
-		{ icon: 'ri:twitter-x-fill', href: 'x' },
-		{ icon: 'mdi:pinterest', href: 'pinterest' }
+		{ icon: 'mdi:facebook', href: '/facebook' },
+		{ icon: 'mdi:instagram', href: '/instagram' },
+		{ icon: 'ri:twitter-x-fill', href: '/x' },
+		{ icon: 'mdi:pinterest', href: '/pinterest' }
 	];
 </script>
 
@@ -31,7 +31,7 @@
 			</div>
 
 			<!-- Desktop Menu -->
-			<div class="hidden items-center space-x-8 md:flex">
+			<div class="hidden items-center space-x-8 lg:flex">
 				{#each navOptions as option}
 					<a href={option.href} class="group relative text-gray-600 hover:text-gray-900">
 						<p class="capitalize">{option.label}</p>
@@ -55,7 +55,7 @@
 			</div>
 
 			<!-- Mobile Menu Button -->
-			<div class="flex items-center md:hidden">
+			<div class="flex items-center lg:hidden">
 				<button
 					aria-label="mobile-menu-button"
 					onclick={() => (isOpen = !isOpen)}
@@ -76,7 +76,7 @@
 
 	<!-- Mobile Menu -->
 	{#if isOpen}
-		<div class="absolute top-12 z-20 h-fit w-full bg-[#e6e6e6] px-4 pt-2 pb-3 md:hidden">
+		<div class="absolute top-12 z-20 h-fit w-full bg-[#e6e6e6] px-4 pt-2 pb-3 lg:hidden">
 			{#each navOptions as option}
 				<a
 					href={option.href}
