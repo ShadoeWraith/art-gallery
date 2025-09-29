@@ -51,7 +51,7 @@
 					<img
 						src={artwork.imageUrl}
 						alt={artwork.title}
-						class="borderimg m-auto w-64 shadow-2xl shadow-stone-500 md:w-84 lg:w-96"
+						class="borderimg m-auto max-h-[30rem] max-w-[42rem] shadow-2xl shadow-stone-500 max-sm:max-h-72 max-sm:max-w-80 lg:w-auto"
 						style={selectedFrame ? `border-image-source: url('${selectedFrame.imageUrl}')` : ''}
 					/>
 				</div>
