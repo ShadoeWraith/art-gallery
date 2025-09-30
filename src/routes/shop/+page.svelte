@@ -2,13 +2,16 @@
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
 	let artwork: any = $state([]);
+	let loading: boolean = $state(true);
 
 	onMount(async () => {
 		const res = await fetch('/api/proxy/images');
 		const json = await res.json();
 		artwork = json.Items;
+		loading = false;
 	});
 
 	let colors = $state([
@@ -74,13 +77,26 @@
 		<div
 			class="col-span-12 grid grid-cols-1 border-r-2 border-stone-400 md:grid-cols-3 lg:col-span-10 lg:grid-cols-4"
 		>
-			{#if artwork}
+			{#if loading}
+				<!-- Skeleton placeholder while loading -->
+				{#each Array(10) as _}
+					<div class="w-full border-r-2 border-b-2 border-stone-400 py-8">
+						<div class="h-80 px-8">
+							<Skeleton class="m-auto h-80 w-full bg-gray-400" />
+						</div>
+						<div class="m-auto w-full px-4 pt-2">
+							<Skeleton class="mb-2 h-6 w-1/2 bg-gray-400" />
+							<Skeleton class="h-8 w-3/4 bg-gray-400" />
+						</div>
+					</div>
+				{/each}
+			{:else}
+				<!-- Actual artwork display -->
 				{#each artwork as art}
 					<a href={`shop/${art.id}`} class="w-full border-r-2 border-b-2 border-stone-400 py-8">
 						<div class="h-80 px-8">
 							<img src={art.imageUrl} alt="" class="m-auto h-80 object-contain" />
 						</div>
-
 						<div class="m-auto w-full px-4 pt-2">
 							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
 							<h3 class="text-2xl">{art.title}</h3>
