@@ -3,12 +3,18 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { goto } from '$app/navigation';
+
+	const { data } = $props();
+	let queryParams = data.queryParams;
+
+	console.log('queryParams', queryParams);
 
 	let artwork: any = $state([]);
 	let loading: boolean = $state(true);
 
 	onMount(async () => {
-		const res = await fetch('/api/proxy/images');
+		const res = await fetch(`/api/proxy/images${queryParams ? `${queryParams}` : ''}`);
 		const json = await res.json();
 		artwork = json.Items;
 		loading = false;
@@ -25,7 +31,14 @@
 		{ label: 'White', color: 'bg-white' },
 		{ label: 'Black', color: 'bg-black' }
 	]);
-	let sizes = $state(['22x29', '34x45', '46x60']);
+	let sizes = $state(['None for now']);
+	let artists = $state(['First Last', 'Artist Name', 'Shaun']);
+
+	const handleFilters = (type: string, value: any) => {
+		const params = `${type}=${value}`;
+
+		goto(`?${params}`).then(() => location.reload());
+	};
 </script>
 
 <section>
@@ -45,12 +58,13 @@
 
 				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
 					{#each colors as color}
-						<div
+						<button
+							onclick={() => handleFilters('tags', color.label)}
 							class=" flex items-center gap-2 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
 						>
 							<div class={`h-5 w-5 rounded border-1 border-stone-400 ${color.color}`}></div>
 							<span>{color.label}</span>
-						</div>
+						</button>
 					{/each}
 				</Collapsible.Content>
 			</Collapsible.Root>
@@ -73,6 +87,27 @@
 					{/each}
 				</Collapsible.Content>
 			</Collapsible.Root>
+
+			<Collapsible.Root open>
+				<Collapsible.Trigger class="w-full">
+					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
+						<h4 class="text-lg">Artist</h4>
+						<Icon icon="mdi:chevron-down" class="ml-auto"></Icon>
+						<span class="sr-only">Toggle</span>
+					</div>
+				</Collapsible.Trigger>
+
+				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
+					{#each artists as artist}
+						<button
+							onclick={() => handleFilters('artist', artist)}
+							class=" flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
+						>
+							<span>{artist}</span>
+						</button>
+					{/each}
+				</Collapsible.Content>
+			</Collapsible.Root>
 		</div>
 		<div
 			class="col-span-12 grid grid-cols-1 border-r-2 border-stone-400 md:grid-cols-3 lg:col-span-10 lg:grid-cols-4"
@@ -92,17 +127,26 @@
 				{/each}
 			{:else}
 				<!-- Actual artwork display -->
-				{#each artwork as art}
-					<a href={`shop/${art.id}`} class="w-full border-r-2 border-b-2 border-stone-400 py-8">
-						<div class="h-80 px-8">
-							<img src={art.imageUrl} alt="" class="m-auto h-80 object-contain" />
-						</div>
-						<div class="m-auto w-full px-4 pt-2">
-							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
-							<h3 class="text-2xl">{art.title}</h3>
-						</div>
-					</a>
-				{/each}
+				{#if artwork.length === 0}
+					<div class="col-span-4 m-auto grid min-h-screen w-full place-items-center text-3xl">
+						No results found
+					</div>
+				{:else}
+					{#each artwork as art}
+						<a
+							href={`shop/${art.id}`}
+							class="max-h-[28rem] w-full border-r-2 border-b-2 border-stone-400 py-8"
+						>
+							<div class="h-80 px-8">
+								<img src={art.imageUrl} alt="" class="m-auto h-80 object-contain" />
+							</div>
+							<div class="m-auto w-full px-4 pt-2">
+								<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
+								<h3 class="text-2xl">{art.title}</h3>
+							</div>
+						</a>
+					{/each}
+				{/if}
 			{/if}
 		</div>
 	</div>

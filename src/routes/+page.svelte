@@ -82,7 +82,7 @@
 	<div class="bg-stone-300 py-8">
 		<div class="grid grid-cols-1 gap-2 md:mx-48 md:grid-cols-3">
 			<a
-				href="/shop/c5e0f828-f650-489f-b140-90c6baf437b2"
+				href="/shop/05ff57ff-cfc9-477b-b8b9-d44dd0e0b476"
 				class="m-auto w-full border-b-2 border-stone-400 md:border-y-0"
 			>
 				<img src={cigarGirl} alt="" class="m-auto h-96" />
@@ -93,7 +93,7 @@
 				</div>
 			</a>
 			<a
-				href="/shop/90afc163-6135-4e6c-97b9-34abb9051bde"
+				href="/shop/b8d1a8c2-8e4c-4529-a73b-cc136163dbcc"
 				class="m-auto w-full border-b-2 border-stone-400 md:border-x-2 md:border-y-0"
 			>
 				<img src={lion} alt="" class="m-auto h-96" />

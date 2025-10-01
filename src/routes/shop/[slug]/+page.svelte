@@ -14,10 +14,11 @@
 
 	onMount(async () => {
 		let json;
+
 		await fetch(`/api/proxy/images/${data.slug}`)
 			.then(async (res) => {
 				json = await res.json();
-				artwork = json.Item;
+				artwork = json.Items[0];
 			})
 			.then(async () => {
 				await fetch(`/api/proxy/frames`)

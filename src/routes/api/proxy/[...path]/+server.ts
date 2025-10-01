@@ -13,6 +13,8 @@ export async function GET({ params, url }: { params: { path: string | string[] }
 		const pathSegments = Array.isArray(params.path) ? params.path : [params.path];
 		const query = url.searchParams.toString();
 
+		console.log('query', query);
+
 		// Construct full target URL
 		const target = `${apiBase}/${pathSegments.join('/')}${query ? `?${query}` : ''}`;
 
@@ -30,6 +32,7 @@ export async function GET({ params, url }: { params: { path: string | string[] }
 		return new Response(JSON.stringify(data), {
 			headers: { 'Content-Type': 'application/json' }
 		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (err: any) {
 		console.error('Unhandled error:', err);
 		return new Response(JSON.stringify({ message: 'Internal Error', error: err.message }), {
