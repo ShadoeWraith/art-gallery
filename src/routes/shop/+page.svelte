@@ -14,11 +14,27 @@
 	let loading: boolean = $state(true);
 
 	onMount(async () => {
-		const res = await fetch(`/api/proxy/images${queryParams ? `${queryParams}` : ''}`);
-		const json = await res.json();
-		artwork = json.Items;
-		startKey = json.nextStartKey;
-		loading = false;
+		const fullUrl = `/api/proxy/images${queryParams ? `${queryParams}` : ''}`;
+		const cached = loadFromLocalStorage('artworkData');
+
+		if (cached && cached.fullUrl === fullUrl) {
+			artwork = cached.items;
+			startKey = cached.startKey;
+			loading = false;
+		} else {
+			const res = await fetch(fullUrl);
+			const json = await res.json();
+
+			artwork = json.Items;
+			startKey = json.nextStartKey;
+			loading = false;
+
+			saveToLocalStorage('artworkData', {
+				items: json.Items,
+				startKey: json.nextStartKey,
+				fullUrl
+			});
+		}
 	});
 
 	let colors = $state([
@@ -66,12 +82,34 @@
 	};
 
 	const getArtwork = async (queryString: string) => {
-		artwork = [];
-		const res = await fetch(`/api/proxy/images?${queryString}`);
-		const json = await res.json();
+		const fullUrl = `/api/proxy/images?${queryString}`;
+		const cached = loadFromLocalStorage('artworkData');
 
-		artwork = json.Items;
-		startKey = json.nextStartKey;
+		if (cached && cached.fullUrl === fullUrl) {
+			artwork = cached.items;
+			startKey = cached.startKey;
+		} else {
+			const res = await fetch(fullUrl);
+			const json = await res.json();
+
+			artwork = json.Items;
+			startKey = json.nextStartKey;
+
+			saveToLocalStorage('artworkData', {
+				items: json.Items,
+				startKey: json.nextStartKey,
+				fullUrl
+			});
+		}
+	};
+
+	const saveToLocalStorage = (key: string, value: any) => {
+		localStorage.setItem(key, JSON.stringify(value));
+	};
+
+	const loadFromLocalStorage = (key: string) => {
+		const data = localStorage.getItem(key);
+		return data ? JSON.parse(data) : null;
 	};
 
 	const handleFilters = (type: string, value: string) => {
@@ -103,16 +141,27 @@
 		if (!startKey) return;
 
 		const params = new URLSearchParams(window.location.search);
-		params.set('startKey', startKey); // don't encode manually — fetch will handle it
+		params.set('startKey', startKey);
 
 		const queryString = params.toString();
+		const fullUrl = `/api/proxy/images?${queryString}`;
+		const cached = loadFromLocalStorage('artworkData');
+
 		goto(`?${queryString}`, { noScroll: true });
 
-		const res = await fetch(`/api/proxy/images?${queryString}`);
-		const json = await res.json();
+		if (!cached || cached.fullUrl !== fullUrl) {
+			const res = await fetch(fullUrl);
+			const json = await res.json();
 
-		artwork.push(...json.Items);
-		startKey = json.nextStartKey;
+			artwork.push(...json.Items);
+			startKey = json.nextStartKey;
+
+			saveToLocalStorage('artworkData', {
+				items: artwork,
+				startKey: json.nextStartKey,
+				fullUrl
+			});
+		}
 	};
 </script>
 
