@@ -33,7 +33,11 @@
 			<!-- Desktop Menu -->
 			<div class="hidden items-center space-x-8 lg:flex">
 				{#each navOptions as option}
-					<a href={option.href} class="group relative text-gray-600 hover:text-gray-900">
+					<a
+						href={option.href}
+						data-sveltekit-reload
+						class="group relative text-gray-600 hover:text-gray-900"
+					>
 						<p class="capitalize">{option.label}</p>
 						<span
 							class="absolute top-8 h-1 w-full origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
