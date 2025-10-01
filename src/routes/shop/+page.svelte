@@ -4,12 +4,11 @@
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { stopPropagation } from 'svelte/legacy';
 
 	const { data } = $props();
 	let queryParams = data.queryParams;
-
-	console.log('queryParams', queryParams);
-
 	let artwork: any = $state([]);
 	let startKey: any = $state('');
 	let loading: boolean = $state(true);
@@ -38,21 +37,78 @@
 
 	let showFilters: boolean = $state(false);
 
-	const handleFilters = (type: string, value: any) => {
-		const params = `${type}=${value}`;
+	const setQueryParameter = (obj: any, key: string, value: string) => {
+		const current = obj[key];
 
-		goto(`?${params}`).then(() => location.reload());
+		if (key === 'tags') {
+			const tagValues = current ? current.split(',').filter(Boolean) : [];
+
+			if (tagValues.includes(value)) {
+				const updated = tagValues.filter((t: string) => t !== value);
+				if (updated.length > 0) {
+					obj[key] = updated.join(',');
+				} else {
+					delete obj[key];
+				}
+			} else {
+				tagValues.push(value);
+				obj[key] = tagValues.join(',');
+			}
+		} else if (key !== 'tags') {
+			if (current === value) {
+				delete obj[key];
+			} else {
+				obj[key] = value;
+			}
+		} else {
+			obj[key] = value;
+		}
+	};
+
+	const getArtwork = async (queryString: string) => {
+		artwork = [];
+		const res = await fetch(`/api/proxy/images?${queryString}`);
+		const json = await res.json();
+
+		artwork = json.Items;
+		startKey = json.nextStartKey;
+	};
+
+	const handleFilters = (type: string, value: string) => {
+		let params = new URLSearchParams(window.location.search);
+		let obj = Object.fromEntries(params.entries());
+
+		if (obj.startKey) delete obj.startKey;
+
+		setQueryParameter(obj, type, value);
+
+		let queryString = new URLSearchParams(obj).toString();
+		goto(`?${queryString}`, { invalidateAll: true });
+		getArtwork(queryString);
+	};
+
+	const resetFilter = (type: string) => {
+		let params = new URLSearchParams(window.location.search);
+		let obj = Object.fromEntries(params.entries());
+
+		if (obj[type]) delete obj[type];
+		if (obj.startKey) delete obj.startKey;
+
+		const queryString = new URLSearchParams(obj).toString();
+		goto(`?${queryString}`, { invalidateAll: true });
+		getArtwork(queryString);
 	};
 
 	const handleLoadMore = async () => {
-		let encodedStartKey = encodeURIComponent(startKey);
+		if (!startKey) return;
 
-		if (!queryParams) goto(`?startKey=${encodedStartKey}`, { noScroll: true });
-		else goto(`${queryParams}&startKey=${encodedStartKey}`, { noScroll: true });
+		const params = new URLSearchParams(window.location.search);
+		params.set('startKey', startKey); // don't encode manually — fetch will handle it
 
-		const res = await fetch(
-			`/api/proxy/images${queryParams ? `${queryParams}&startKey=${encodedStartKey}` : `?startKey=${encodedStartKey}`}`
-		);
+		const queryString = params.toString();
+		goto(`?${queryString}`, { noScroll: true });
+
+		const res = await fetch(`/api/proxy/images?${queryString}`);
 		const json = await res.json();
 
 		artwork.push(...json.Items);
@@ -84,8 +140,17 @@
 				<Collapsible.Trigger class="w-full">
 					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
 						<h4 class="text-lg">Color</h4>
-						<Icon icon="mdi:chevron-down" class="ml-auto" />
-						<span class="sr-only">Toggle</span>
+						<div class="ml-auto flex items-center gap-1">
+							<button
+								onclick={(event) => {
+									event.stopPropagation();
+									resetFilter('tags');
+								}}
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+							>
+								Reset
+							</button>
+						</div>
 					</div>
 				</Collapsible.Trigger>
 				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
@@ -101,13 +166,50 @@
 				</Collapsible.Content>
 			</Collapsible.Root>
 
+			<Collapsible.Root open>
+				<Collapsible.Trigger class="w-full">
+					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
+						<h4 class="text-lg">Orientation</h4>
+						<div class="ml-auto flex items-center gap-1">
+							<button
+								onclick={(event) => {
+									event.stopPropagation();
+									resetFilter('tags');
+								}}
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+							>
+								Reset
+							</button>
+						</div>
+					</div>
+				</Collapsible.Trigger>
+				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
+					{#each sizes as size}
+						<div
+							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
+						>
+							<span>{size}</span>
+						</div>
+					{/each}
+				</Collapsible.Content>
+			</Collapsible.Root>
+
 			<!-- Size Filter -->
 			<Collapsible.Root open>
 				<Collapsible.Trigger class="w-full">
 					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
 						<h4 class="text-lg">Size</h4>
-						<Icon icon="mdi:chevron-down" class="ml-auto" />
-						<span class="sr-only">Toggle</span>
+						<div class="ml-auto flex items-center gap-1">
+							<button
+								onclick={(event) => {
+									event.stopPropagation();
+									resetFilter('tags');
+								}}
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+							>
+								Reset
+							</button>
+						</div>
 					</div>
 				</Collapsible.Trigger>
 				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
@@ -126,8 +228,17 @@
 				<Collapsible.Trigger class="w-full">
 					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
 						<h4 class="text-lg">Artist</h4>
-						<Icon icon="mdi:chevron-down" class="ml-auto" />
-						<span class="sr-only">Toggle</span>
+						<div class="ml-auto flex items-center gap-1">
+							<button
+								onclick={(event) => {
+									event.stopPropagation();
+									resetFilter('tags');
+								}}
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+							>
+								Reset
+							</button>
+						</div>
 					</div>
 				</Collapsible.Trigger>
 				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
