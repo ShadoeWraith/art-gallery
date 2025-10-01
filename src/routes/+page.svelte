@@ -104,7 +104,7 @@
 				</div>
 			</a>
 			<a
-				href="/shop/05ff57ff-cfc9-477b-b8b9-d44dd0e0b476"
+				href="/shop/16d4a638-1e01-40e3-b371-d57ddfa17684"
 				class="m-auto w-full border-b-2 border-stone-400 md:border-y-0"
 			>
 				<img src={birds} alt="" class="m-auto h-96" />
