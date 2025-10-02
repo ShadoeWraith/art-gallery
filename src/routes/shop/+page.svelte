@@ -1,17 +1,15 @@
 <script lang="ts">
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { stopPropagation } from 'svelte/legacy';
 
 	const { data } = $props();
 	let queryParams = data.queryParams;
 	let artwork: any = $state([]);
 	let startKey: any = $state('');
 	let loading: boolean = $state(true);
+	let loadMoreDisabled: boolean = $state(false);
 
 	onMount(async () => {
 		const fullUrl = `/api/proxy/images${queryParams ? `${queryParams}` : ''}`;
@@ -48,6 +46,7 @@
 		{ label: 'White', color: 'bg-white' },
 		{ label: 'Black', color: 'bg-black' }
 	]);
+	let orientation = $state(['Horizontal', 'Vertical']);
 	let sizes = $state(['None for now']);
 	let artists = $state(['First Last', 'Artist Name', 'Shaun']);
 
@@ -121,11 +120,11 @@
 		setQueryParameter(obj, type, value);
 
 		let queryString = new URLSearchParams(obj).toString();
-		goto(`?${queryString}`, { invalidateAll: true });
+		goto(`?${queryString}`, { noScroll: true });
 		getArtwork(queryString);
 	};
 
-	const resetFilter = (type: string) => {
+	const resetFilter = (type: string, subType: string | null = null) => {
 		let params = new URLSearchParams(window.location.search);
 		let obj = Object.fromEntries(params.entries());
 
@@ -133,12 +132,19 @@
 		if (obj.startKey) delete obj.startKey;
 
 		const queryString = new URLSearchParams(obj).toString();
-		goto(`?${queryString}`, { invalidateAll: true });
+		goto(`?${queryString}`, { noScroll: true });
+		getArtwork(queryString);
+	};
+
+	const clearFilters = () => {
+		const queryString = '';
+		goto('/shop', { noScroll: true });
 		getArtwork(queryString);
 	};
 
 	const handleLoadMore = async () => {
 		if (!startKey) return;
+		loadMoreDisabled = true;
 
 		const params = new URLSearchParams(window.location.search);
 		params.set('startKey', startKey);
@@ -155,6 +161,8 @@
 
 			artwork.push(...json.Items);
 			startKey = json.nextStartKey;
+
+			loadMoreDisabled = false;
 
 			saveToLocalStorage('artworkData', {
 				items: artwork,
@@ -182,10 +190,21 @@
 	<div class="grid grid-cols-12">
 		<!-- Filters Sidebar -->
 		<div
-			class={`col-span-12 ${showFilters ? 'flex' : 'hidden'} flex-col border-r-2 border-stone-400 lg:col-span-2 lg:flex`}
+			class={`col-span-12 ${showFilters ? 'flex' : 'hidden'} flex-col border-r-2 border-b-2 border-stone-400 [box-shadow:4px_0_6px_-2px_rgba(0,0,0,0.1)] lg:col-span-2 lg:flex`}
 		>
+			<div class="flex w-full items-center border-b-2 border-stone-400 px-4 py-2">
+				<h4 class="text-lg font-semibold">Filters</h4>
+				<div class="ml-auto flex items-center gap-1">
+					<button
+						onclick={clearFilters}
+						class="text-right text-sm font-bold duration-150 hover:text-red-600"
+					>
+						Clear Filters
+					</button>
+				</div>
+			</div>
 			<!-- Color Filter -->
-			<Collapsible.Root open>
+			<Collapsible.Root open class="">
 				<Collapsible.Trigger class="w-full">
 					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
 						<h4 class="text-lg">Color</h4>
@@ -193,7 +212,7 @@
 							<button
 								onclick={(event) => {
 									event.stopPropagation();
-									resetFilter('tags');
+									resetFilter('tags', 'color');
 								}}
 								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
@@ -202,7 +221,7 @@
 						</div>
 					</div>
 				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
+				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
 					{#each colors as color}
 						<button
 							onclick={() => handleFilters('tags', color.label)}
@@ -215,6 +234,7 @@
 				</Collapsible.Content>
 			</Collapsible.Root>
 
+			<!-- Orientation Filter -->
 			<Collapsible.Root open>
 				<Collapsible.Trigger class="w-full">
 					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
@@ -223,7 +243,7 @@
 							<button
 								onclick={(event) => {
 									event.stopPropagation();
-									resetFilter('tags');
+									resetFilter('tags', 'orientation');
 								}}
 								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
@@ -232,13 +252,14 @@
 						</div>
 					</div>
 				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
-					{#each sizes as size}
-						<div
+				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
+					{#each orientation as o}
+						<button
+							onclick={() => handleFilters('tags', o)}
 							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
 						>
-							<span>{size}</span>
-						</div>
+							<span>{o}</span>
+						</button>
 					{/each}
 				</Collapsible.Content>
 			</Collapsible.Root>
@@ -252,7 +273,7 @@
 							<button
 								onclick={(event) => {
 									event.stopPropagation();
-									resetFilter('tags');
+									resetFilter('tags', 'size');
 								}}
 								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
@@ -261,7 +282,7 @@
 						</div>
 					</div>
 				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
+				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
 					{#each sizes as size}
 						<div
 							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
@@ -275,13 +296,13 @@
 			<!-- Artist Filter -->
 			<Collapsible.Root open>
 				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
+					<div class="flex w-full items-center border-b-2 border-stone-400 p-4 shadow-lg">
 						<h4 class="text-lg">Artist</h4>
 						<div class="ml-auto flex items-center gap-1">
 							<button
 								onclick={(event) => {
 									event.stopPropagation();
-									resetFilter('tags');
+									resetFilter('artist');
 								}}
 								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
@@ -290,7 +311,7 @@
 						</div>
 					</div>
 				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 py-4 pb-2">
+				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
 					{#each artists as artist}
 						<button
 							onclick={() => handleFilters('artist', artist)}
@@ -320,7 +341,9 @@
 					</div>
 				{/each}
 			{:else if artwork.length === 0}
-				<div class="col-span-4 m-auto grid min-h-screen w-full place-items-center text-3xl">
+				<div
+					class="col-span-4 m-auto w-full py-28 text-center text-3xl md:min-h-[50vh] lg:min-h-screen"
+				>
 					No results found
 				</div>
 			{:else}
@@ -330,7 +353,11 @@
 						class="max-h-[28rem] w-full border-r-2 border-b-2 border-stone-400 py-8"
 					>
 						<div class="h-80 px-8">
-							<img src={art.imageUrl} alt="" class="m-auto h-80 object-contain" />
+							<img
+								src={art.imageUrl}
+								alt={`image of ${art.title} by: ${art.artist}`}
+								class="m-auto h-full bg-transparent object-contain"
+							/>
 						</div>
 						<div class="m-auto w-full px-4 pt-2">
 							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
@@ -343,14 +370,17 @@
 
 		<!-- Load More Button -->
 		{#if startKey}
-			<div class="col-span-full grid place-content-center border-t-2 border-stone-400 py-12">
+			<div class="col-span-full grid place-content-center border-t border-stone-400 py-4">
 				<button
+					disabled={loadMoreDisabled}
 					onclick={handleLoadMore}
-					class="cursor-pointer rounded-md border-2 border-indigo-500 bg-indigo-700 px-12 py-4 text-xl text-gray-200"
+					class="cursor-pointer rounded-md border-2 border-indigo-500 bg-indigo-700 px-8 py-2 text-xl font-semibold text-gray-200 duration-150 hover:bg-indigo-600"
 				>
 					Load More
 				</button>
 			</div>
+		{:else}
+			<div class="col-span-full grid place-content-center border-t border-stone-400 py-8"></div>
 		{/if}
 	</div>
 </section>

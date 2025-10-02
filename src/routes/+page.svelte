@@ -80,12 +80,12 @@
 	</div>
 
 	<div class="bg-stone-300 py-8">
-		<div class="grid grid-cols-1 gap-2 md:mx-48 md:grid-cols-3">
+		<div class="mx-4 grid grid-cols-1 gap-2 md:grid-cols-3 lg:mx-48">
 			<a
 				href="/shop/05ff57ff-cfc9-477b-b8b9-d44dd0e0b476"
 				class="m-auto w-full border-b-2 border-stone-400 md:border-y-0"
 			>
-				<img src={cigarGirl} alt="" class="m-auto h-96" />
+				<img src={cigarGirl} alt="" class="m-auto h-80 lg:h-96" />
 
 				<div class="m-auto px-4 pt-2 md:w-96">
 					<h4 class="w-fit font-semibold">Artwork Title</h4>
@@ -96,7 +96,7 @@
 				href="/shop/b8d1a8c2-8e4c-4529-a73b-cc136163dbcc"
 				class="m-auto w-full border-b-2 border-stone-400 md:border-x-2 md:border-y-0"
 			>
-				<img src={lion} alt="" class="m-auto h-96" />
+				<img src={lion} alt="" class="m-auto h-80 lg:h-96" />
 
 				<div class="m-auto px-4 pt-2 md:w-96">
 					<h4 class="w-fit font-semibold">Artwork Title</h4>
@@ -107,7 +107,7 @@
 				href="/shop/16d4a638-1e01-40e3-b371-d57ddfa17684"
 				class="m-auto w-full border-b-2 border-stone-400 md:border-y-0"
 			>
-				<img src={birds} alt="" class="m-auto h-96" />
+				<img src={birds} alt="" class="m-auto h-80 lg:h-96" />
 
 				<div class="m-auto px-4 pt-2 md:w-96">
 					<h4 class="w-fit font-semibold">Artwork Title</h4>
@@ -128,34 +128,41 @@
 </section>
 
 <section>
-	<div class="m-auto grid grid-cols-1 gap-12 py-8 md:mx-12 md:grid-cols-3">
-		<a href="news" class="group relative h-[32rem] overflow-hidden hover:cursor-pointer">
-			<img src={boats} alt="" class="object-fit h-full w-full p-2 md:p-0" />
-			<div class="absolute"></div>
-			<div
-				class="absolute top-0 grid h-full w-full place-content-center duration-150 group-hover:bg-[#00000065]"
-			>
-				<h3 class="text-center text-4xl font-bold text-white">See What's New</h3>
-			</div>
-		</a>
-
-		<a href="collections" class="group relative h-[32rem] overflow-hidden hover:cursor-pointer">
-			<img src={turtle} alt="" class="object-fit h-full w-full p-2 md:p-0" />
-			<div class="absolute"></div>
-			<div
-				class="absolute top-0 grid h-full w-full place-content-center duration-150 group-hover:bg-[#00000065]"
-			>
-				<h3 class="text-center text-4xl font-bold text-white">View Our Collections</h3>
-			</div>
-		</a>
-
-		<a href="artists" class="group relative h-[32rem] overflow-hidden hover:cursor-pointer">
+	<div class="m-auto grid grid-cols-1 gap-12 py-8 md:mx-12 md:grid-cols-2 lg:grid-cols-3">
+		<a
+			href="artists"
+			class="group relative h-[22rem] overflow-hidden hover:cursor-pointer lg:h-[32rem]"
+		>
 			<img src={kids} alt="" class="object-fit h-full w-full p-2 md:p-0" />
 			<div class="absolute"></div>
 			<div
 				class="absolute top-0 grid h-full w-full place-content-center duration-150 group-hover:bg-[#00000065]"
 			>
 				<h3 class="text-center text-4xl font-bold text-white">Meet Our Artists</h3>
+			</div>
+		</a>
+		<a
+			href="/about"
+			class="group relative h-[22rem] overflow-hidden hover:cursor-pointer lg:h-[32rem]"
+		>
+			<img src={turtle} alt="" class="object-fit h-full w-full p-2 md:p-0" />
+			<div class="absolute"></div>
+			<div
+				class="absolute top-0 grid h-full w-full place-content-center duration-150 group-hover:bg-[#00000065]"
+			>
+				<h3 class="text-center text-4xl font-bold text-white">About Us</h3>
+			</div>
+		</a>
+		<a
+			href="/contact"
+			class="group relative h-[22rem] overflow-hidden hover:cursor-pointer md:col-span-2 lg:h-[32rem]"
+		>
+			<img src={boats} alt="" class="object-fit h-full w-full p-2 md:p-0" />
+			<div class="absolute"></div>
+			<div
+				class="absolute top-0 grid h-full w-full place-content-center duration-150 group-hover:bg-[#00000065]"
+			>
+				<h3 class="text-center text-4xl font-bold text-white">Contact Us</h3>
 			</div>
 		</a>
 	</div>

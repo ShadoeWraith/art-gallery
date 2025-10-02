@@ -6,8 +6,8 @@
 	let navOptions = [
 		{ label: 'Shop', href: '/shop' },
 		{ label: 'Artists', href: '/artists' },
-		{ label: 'Collections', href: '/collections' },
-		{ label: 'News', href: '/news' },
+		// { label: 'Collections', href: '/collections' },
+		// { label: 'News', href: '/news' },
 		{ label: 'About Us', href: '/about' },
 		{ label: 'Contact', href: '/contact' }
 	];

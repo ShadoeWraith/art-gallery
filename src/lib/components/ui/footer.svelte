@@ -6,42 +6,42 @@
 </script>
 
 <footer class="w-full border-t-2 border-stone-400 bg-stone-300">
-	<div class="m-auto grid grid-cols-1 py-8 md:mx-24 md:grid-cols-4">
+	<div class="m-auto grid grid-cols-1 md:grid-cols-3 md:py-8 lg:mx-24">
 		<div class="flex flex-col gap-4 border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
 			<h5 class="mb-2 font-semibold">Shop</h5>
-			<a href="shop" class="group relative">
+			<a href="/shop" class="group relative">
 				<p class="capitalize">Shop All</p>
 				<span
 					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
 				></span>
 			</a>
-			<a href="shop" class="group relative">
+			<a href="/artist" class="group relative">
 				<p class="capitalize">By Artist</p>
 				<span
 					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
 				></span>
 			</a>
-			<a href="shop" class="group relative">
+			<!-- <a href="/collection" class="group relative">
 				<p class="capitalize">By Collection</p>
 				<span
 					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
 				></span>
-			</a>
+			</a> -->
 		</div>
 		<div class="flex flex-col gap-4 border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
 			<h5 class="mb-2 font-semibold">Company</h5>
-			<a href="about" class="group relative">
+			<a href="/about" class="group relative">
 				<p class="capitalize">About Us</p>
 				<span
 					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
 				></span>
 			</a>
-			<a href="news" class="group relative">
+			<!-- <a href="/news" class="group relative">
 				<p class="capitalize">News</p>
 				<span
 					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
 				></span>
-			</a>
+			</a> -->
 		</div>
 		<div class="flex flex-col gap-4 border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
 			<h5 class="mb-2 font-semibold">Contact</h5>
@@ -84,7 +84,7 @@
 				</a>
 			</div>
 		</div>
-		<div class="flex flex-col gap-4 border-stone-400 px-4 py-2">
+		<!-- <div class="flex flex-col gap-4 border-stone-400 px-4 py-2">
 			<h5 class="mb-2 font-semibold">Newsletter</h5>
 
 			<Label>Sign up to our newsletter.</Label>
@@ -98,9 +98,9 @@
 					>Subscribe</Button
 				>
 			</form>
-		</div>
+		</div> -->
 	</div>
-	<div class="flex h-12 w-full border-t-2 border-stone-400">
+	<div class="flex h-12 w-full border-stone-400 md:border-t-2">
 		<span class="m-auto w-full text-center text-xs md:text-base">
 			Copyright, An Art Gallery Company&copy;, 2025 All Rights Reserved.
 		</span>
