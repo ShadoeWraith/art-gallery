@@ -1,1 +1,9 @@
-<h1>hello</h1>
+<script lang="ts">
+	import { userManager } from '$lib/userManager';
+
+	const signIn = () => {
+		userManager.signinRedirect();
+	};
+</script>
+
+<button onclick={signIn}>Login</button>

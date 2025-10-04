@@ -2,21 +2,38 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 
+	import { signOutRedirect, userManager } from '$lib/userManager';
+
 	import { onMount } from 'svelte';
 	let artwork: any = $state([]);
+	let email: any = $state('');
 
 	onMount(async () => {
 		const res = await fetch('/api/proxy/images');
 		const json = await res.json();
 		artwork = json.Items;
+
+		userManager.signinCallback().then((user) => {
+			email = user?.profile?.email;
+		});
 	});
 
 	const sideBarItem = $state([{ label: 'Create Image', href: 'dashboard/create' }]);
+
+	const signOut = async () => {
+		await signOutRedirect();
+	};
 </script>
 
 <section>
 	<div class="flex h-16 w-full items-center border-b-2 border-stone-400">
 		<h1 class="w-full text-center text-4xl">Dashboard</h1>
+	</div>
+
+	<div>
+		<h2>Hello: {email}</h2>
+
+		<button onclick={signOut}>Sign Out</button>
 	</div>
 
 	<div>
