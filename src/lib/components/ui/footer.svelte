@@ -43,7 +43,7 @@
 				></span>
 			</a> -->
 		</div>
-		<div class="flex flex-col gap-4 border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
+		<div class="flex flex-col gap-4 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
 			<h5 class="mb-2 font-semibold">Contact</h5>
 			<a href="contact" class="font-semibold underline underline-offset-4">email@email.com</a>
 			<div class="flex flex-col">

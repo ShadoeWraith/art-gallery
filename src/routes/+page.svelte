@@ -155,7 +155,7 @@
 		</a>
 		<a
 			href="/contact"
-			class="group relative h-[22rem] overflow-hidden hover:cursor-pointer md:col-span-2 lg:h-[32rem]"
+			class="group relative h-[22rem] overflow-hidden hover:cursor-pointer md:col-span-2 lg:col-span-1 lg:h-[32rem]"
 		>
 			<img src={boats} alt="" class="object-fit h-full w-full p-2 md:p-0" />
 			<div class="absolute"></div>
