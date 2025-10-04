@@ -374,7 +374,7 @@
 				<button
 					disabled={loadMoreDisabled}
 					onclick={handleLoadMore}
-					class="cursor-pointer rounded-md border-2 border-indigo-500 bg-indigo-700 px-8 py-2 text-xl font-semibold text-gray-200 duration-150 hover:bg-indigo-600"
+					class="cursor-pointer rounded-md border-2 border-indigo-500 bg-indigo-700 px-8 py-2 text-xl font-semibold text-gray-200 duration-150 hover:bg-indigo-600 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-400"
 				>
 					Load More
 				</button>
