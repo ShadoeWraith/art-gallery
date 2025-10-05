@@ -14,6 +14,7 @@
 		artwork = json.Items;
 
 		userManager.signinCallback().then((user) => {
+			console.log(user);
 			email = user?.profile?.email;
 		});
 	});
@@ -30,10 +31,15 @@
 		<h1 class="w-full text-center text-4xl">Dashboard</h1>
 	</div>
 
+	<!-- {#if email} -->
 	<div>
 		<h2>Hello: {email}</h2>
 
-		<button onclick={signOut}>Sign Out</button>
+		<button
+			onclick={signOut}
+			class="rounded-md border-2 border-indigo-500 bg-indigo-600 px-4 py-1 text-gray-200"
+			>Sign Out</button
+		>
 	</div>
 
 	<div>
@@ -72,4 +78,15 @@
 			</Table.Body>
 		</Table.Root>
 	</div>
+	<!-- {:else}
+		<div class="m-auto my-12 flex h-96 w-fit flex-col text-center">
+			<span class="text-2xl font-bold">Not Authorized to view this page. </span>
+
+			<a
+				href="/"
+				class="m-auto w-fit rounded-md border-2 border-indigo-500 bg-indigo-600 px-12 py-4 text-xl font-bold text-gray-200"
+				>Return Home</a
+			>
+		</div>
+	{/if} -->
 </section>
