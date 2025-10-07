@@ -13,8 +13,6 @@ export async function GET({ params, url }: { params: { path: string | string[] }
 		const pathSegments = Array.isArray(params.path) ? params.path : [params.path];
 		const query = url.searchParams.toString();
 
-		console.log('query', query);
-
 		// Construct full target URL
 		const target = `${apiBase}/${pathSegments.join('/')}${query ? `?${query}` : ''}`;
 

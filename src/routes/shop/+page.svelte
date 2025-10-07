@@ -171,6 +171,16 @@
 			});
 		}
 	};
+
+	const handleArtwork = (art: any) => {
+		const artCopy = JSON.parse(JSON.stringify(art));
+
+		console.log(artCopy);
+
+		goto(`/shop/${art.id}`, {
+			state: { art: artCopy }
+		});
+	};
 </script>
 
 <section>
@@ -348,8 +358,8 @@
 				</div>
 			{:else}
 				{#each artwork as art}
-					<a
-						href={`shop/${art.id}`}
+					<button
+						onclick={() => handleArtwork(art)}
 						class="max-h-[28rem] w-full border-r-2 border-b-2 border-stone-400 py-8"
 					>
 						<div class="h-80 px-8">
@@ -363,7 +373,7 @@
 							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
 							<h3 class="text-2xl">{art.title}</h3>
 						</div>
-					</a>
+					</button>
 				{/each}
 			{/if}
 		</div>

@@ -2,6 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { load } from '../+page.js';
 
 	const { data } = $props();
 
@@ -13,33 +14,88 @@
 	let loading: boolean = $state(true);
 
 	onMount(async () => {
+		const state = history.state?.['sveltekit:states'];
 		let json;
 
-		await fetch(`/api/proxy/images/${data.slug}`)
-			.then(async (res) => {
-				json = await res.json();
-				artwork = json.Items[0];
-			})
-			.then(async () => {
-				await fetch(`/api/proxy/frames`)
-					.then(async (res) => {
-						json = await res.json();
-						frames = json.Items;
-					})
-					.then(() => {
+		if (state !== undefined) {
+			artwork = state.art;
+
+			const cached = loadFromLocalStorage('frames');
+
+			if (cached) {
+				frames = cached;
+				if (artwork?.frameIds?.length && Array.isArray(frames)) {
+					availableFrames = artwork.frameIds
+						.map((id: string) => frames.find((f: any) => f.id === id))
+						.filter(Boolean);
+				}
+				return (loading = false);
+			}
+
+			await fetch(`/api/proxy/frames`)
+				.then(async (res) => {
+					json = await res.json();
+					frames = json.Items;
+
+					saveToLocalStorage('frames', frames);
+				})
+				.then(() => {
+					if (artwork?.frameIds?.length && Array.isArray(frames)) {
+						availableFrames = artwork.frameIds
+							.map((id: string) => frames.find((f: any) => f.id === id))
+							.filter(Boolean);
+					}
+				});
+		} else {
+			await fetch(`/api/proxy/images/${data.slug}`)
+				.then(async (res) => {
+					json = await res.json();
+					artwork = json.Items[0];
+				})
+				.then(async () => {
+					const cached = loadFromLocalStorage('frames');
+
+					if (cached) {
+						frames = cached;
 						if (artwork?.frameIds?.length && Array.isArray(frames)) {
 							availableFrames = artwork.frameIds
 								.map((id: string) => frames.find((f: any) => f.id === id))
 								.filter(Boolean);
 						}
-					});
-				loading = false;
-			});
+						return (loading = false);
+					}
+
+					await fetch(`/api/proxy/frames`)
+						.then(async (res) => {
+							json = await res.json();
+							frames = json.Items;
+
+							saveToLocalStorage('frames', frames);
+						})
+						.then(() => {
+							if (artwork?.frameIds?.length && Array.isArray(frames)) {
+								availableFrames = artwork.frameIds
+									.map((id: string) => frames.find((f: any) => f.id === id))
+									.filter(Boolean);
+							}
+						});
+				});
+		}
+		loading = false;
 	});
 
 	const handleFrameSelection = (frame: any) => {
 		if (frame === 'none') return (selectedFrame = null);
 		selectedFrame = { ...frame };
+	};
+
+	const saveToLocalStorage = (key: string, value: any) => {
+		localStorage.setItem(key, JSON.stringify(value));
+	};
+
+	const loadFromLocalStorage = (key: string) => {
+		const data = localStorage.getItem(key);
+		return data ? JSON.parse(data) : null;
 	};
 </script>
 

@@ -14,7 +14,6 @@
 		artwork = json.Items;
 
 		userManager.signinCallback().then((user) => {
-			console.log(user);
 			email = user?.profile?.email;
 		});
 	});
