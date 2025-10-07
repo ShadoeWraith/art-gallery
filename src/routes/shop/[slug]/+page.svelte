@@ -17,7 +17,7 @@
 		const state = history.state?.['sveltekit:states'];
 		let json;
 
-		if (state !== undefined) {
+		if (state.art !== undefined) {
 			artwork = state.art;
 
 			const cached = loadFromLocalStorage('frames');
