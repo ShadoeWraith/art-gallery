@@ -14,7 +14,7 @@ Here are 2 examples of the artowork on the site.
 
 Go here to see more from [Africa Curated](https://main.d11w62pdls1j5i.amplifyapp.com/)
 
-<img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01684.jpg" width="400"/>
+<img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01640.jpg" width="400"/>
 
 <img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01246.jpg" width="400"/>
 
