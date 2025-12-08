@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { VITE_DYNAMO_ACCESS_KEY, VITE_DYNAMO_SECRET_KEY } from '$env/static/private';
 
 export const client = new DynamoDBClient({
@@ -9,3 +9,5 @@ export const client = new DynamoDBClient({
 		secretAccessKey: VITE_DYNAMO_SECRET_KEY
 	}
 });
+
+export const docClient = DynamoDBDocumentClient.from(client);
