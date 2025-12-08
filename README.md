@@ -10,13 +10,15 @@ It's an art gallery website to showcase artwork from African artists. Inquire ab
 
 ## Some of the Art
 
-Here are 2 examples of the artowork on the site.
+Here are 3 examples of the artowork on the site.
 
 Go here to see more from [Africa Curated](https://main.d11w62pdls1j5i.amplifyapp.com/)
 
-<img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01640.jpg" width="400"/>
+<img src="./assets/girl-black-red.png" width="400"/>
 
-<img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01246.jpg" width="400"/>
+<img src="./assets/girl-cigar.png" width="400"/>
+
+<img src="./assets/lion.png" width="400"/>
 
 ## Technology Used
 
