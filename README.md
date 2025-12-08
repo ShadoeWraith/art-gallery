@@ -1,38 +1,29 @@
-# sv
+# Africa Curated (working title from client)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+**_A Repo With Client Permission To Make Public_**
 
-## Creating a project
+Keep in mind the website is still a work in progress and should be done soon.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## What is it?
 
-```sh
-# create a new project in the current directory
-npx sv create
+It's an art gallery website to showcase artwork from African artists. Inquire about the art listed if interested in purchasing.
 
-# create a new project in my-app
-npx sv create my-app
-```
+## Some of the Art
 
-## Developing
+Here are 2 examples of the artowork on the site.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Go here to see more from [Africa Curated](https://main.d11w62pdls1j5i.amplifyapp.com/)
 
-```sh
-npm run dev
+<img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01684.jpg" width="400"/>
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+<img src="https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/DSC01246.jpg" width="400"/>
 
-## Building
+## Technology Used
 
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- Sveltekit
+- TypeScript
+- Node.JS
+- AWS Amplify
+- AWS S3
+- AWS DynamoDB
+- AWS Lambdas

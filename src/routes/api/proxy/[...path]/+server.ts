@@ -3,7 +3,6 @@ import { BASE_API_URL } from '$env/static/private';
 export async function GET({ params, url }: { params: { path: string | string[] }; url: URL }) {
 	const apiBase = BASE_API_URL;
 
-	// Prefer API_GATEWAY_BASE, fallback to PUBLIC_API_GATEWAY_BASE if needed
 	if (!apiBase) {
 		console.error('Missing API_GATEWAY_BASE environment variable');
 		return new Response(JSON.stringify({ message: 'Missing API_GATEWAY_BASE' }), { status: 500 });
@@ -13,7 +12,6 @@ export async function GET({ params, url }: { params: { path: string | string[] }
 		const pathSegments = Array.isArray(params.path) ? params.path : [params.path];
 		const query = url.searchParams.toString();
 
-		// Construct full target URL
 		const target = `${apiBase}/${pathSegments.join('/')}${query ? `?${query}` : ''}`;
 
 		const res = await fetch(target);
@@ -30,7 +28,6 @@ export async function GET({ params, url }: { params: { path: string | string[] }
 		return new Response(JSON.stringify(data), {
 			headers: { 'Content-Type': 'application/json' }
 		});
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (err: any) {
 		console.error('Unhandled error:', err);
 		return new Response(JSON.stringify({ message: 'Internal Error', error: err.message }), {
