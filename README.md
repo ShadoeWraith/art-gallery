@@ -14,11 +14,11 @@ Here are 3 examples of the artowork on the site.
 
 Go here to see more from [Africa Curated](https://main.d11w62pdls1j5i.amplifyapp.com/)
 
-<img src="./assets/girl-black-red.png" width="400"/>
+<img src="./src/lib/assets/girl-black-red.png" width="400"/>
 
-<img src="./assets/girl-cigar.png" width="400"/>
+<img src="./src/lib/assets/girl-cigar.png" width="400"/>
 
-<img src="./assets/lion.png" width="400"/>
+<img src="./src/lib/assets/lion.png" width="400"/>
 
 ## Technology Used
 

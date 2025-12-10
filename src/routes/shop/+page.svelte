@@ -207,7 +207,7 @@
 				<div class="ml-auto flex items-center gap-1">
 					<button
 						onclick={clearFilters}
-						class="text-right text-sm font-bold duration-150 hover:text-red-600"
+						class="text-right text-sm font-bold duration-150 hover:text-red-600 cursor-pointer"
 					>
 						Clear Filters
 					</button>
@@ -224,7 +224,7 @@
 									event.stopPropagation();
 									resetFilter('tags', 'color');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
 							>
 								Reset
 							</button>
@@ -255,7 +255,7 @@
 									event.stopPropagation();
 									resetFilter('tags', 'orientation');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
 							>
 								Reset
 							</button>
@@ -285,7 +285,7 @@
 									event.stopPropagation();
 									resetFilter('tags', 'size');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
 							>
 								Reset
 							</button>
@@ -314,7 +314,7 @@
 									event.stopPropagation();
 									resetFilter('artist');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600"
+								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
 							>
 								Reset
 							</button>
@@ -360,9 +360,9 @@
 				{#each artwork as art}
 					<button
 						onclick={() => handleArtwork(art)}
-						class="max-h-[28rem] w-full border-r-2 border-b-2 border-stone-400 py-8"
+						class="max-h-[28rem] w-full border-r-2 border-b-2 border-stone-400 py-8 cursor-pointer"
 					>
-						<div class="h-80 px-8">
+						<div class="h-80 mx-4 p-6 bg-stone-300 m-auto rounded">
 							<img
 								src={art.imageUrl}
 								alt={`image of ${art.title} by: ${art.artist}`}
