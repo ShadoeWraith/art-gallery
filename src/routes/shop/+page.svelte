@@ -15,7 +15,7 @@
 		const fullUrl = `/api/proxy/images${queryParams ? `${queryParams}` : ''}`;
 		const cached = loadFromLocalStorage('artworkData');
 
-		if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== "/api/proxy/images") {
+		if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== '/api/proxy/images') {
 			artwork = cached.items;
 			startKey = cached.startKey;
 			loading = false;
@@ -207,7 +207,7 @@
 				<div class="ml-auto flex items-center gap-1">
 					<button
 						onclick={clearFilters}
-						class="text-right text-sm font-bold duration-150 hover:text-red-600 cursor-pointer"
+						class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-red-600"
 					>
 						Clear Filters
 					</button>
@@ -224,7 +224,7 @@
 									event.stopPropagation();
 									resetFilter('tags', 'color');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
+								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
 								Reset
 							</button>
@@ -255,7 +255,7 @@
 									event.stopPropagation();
 									resetFilter('tags', 'orientation');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
+								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
 								Reset
 							</button>
@@ -285,7 +285,7 @@
 									event.stopPropagation();
 									resetFilter('tags', 'size');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
+								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
 								Reset
 							</button>
@@ -314,7 +314,7 @@
 									event.stopPropagation();
 									resetFilter('artist');
 								}}
-								class="text-right text-sm font-bold duration-150 hover:text-indigo-600 cursor-pointer"
+								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
 							>
 								Reset
 							</button>
@@ -358,11 +358,12 @@
 				</div>
 			{:else}
 				{#each artwork as art}
-					<button
+					<a
+						href={`/shop/${art.id}`}
 						onclick={() => handleArtwork(art)}
-						class="max-h-[28rem] w-full border-r-2 border-b-2 border-stone-400 py-8 cursor-pointer"
+						class="max-h-[28rem] w-full cursor-pointer border-r-2 border-b-2 border-stone-400 py-8"
 					>
-						<div class="h-80 mx-4 p-6 bg-stone-300 m-auto rounded">
+						<div class="m-auto mx-4 h-80 rounded bg-stone-300 p-6">
 							<img
 								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
 								alt={`image of ${art.title} by: ${art.artist}`}
@@ -373,7 +374,7 @@
 							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
 							<h3 class="text-2xl">{art.title}</h3>
 						</div>
-					</button>
+					</a>
 				{/each}
 			{/if}
 		</div>

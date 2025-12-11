@@ -20,8 +20,12 @@
 		{ icon: 'mdi:pinterest', href: '/pinterest' }
 	];
 
-	function isActive(href: string) {
-		return page.url.pathname === href;
+	function isActive(href: string): boolean {
+		const currentPath = page.url.pathname;
+
+		if (currentPath === href) return true;
+		if (currentPath.startsWith(href + '/')) return true;
+		return false;
 	}
 </script>
 
@@ -31,17 +35,22 @@
 			<!-- Logo -->
 			<div class="flex flex-shrink-0 items-center">
 				<a href="/" onclick={() => (isOpen = false)} class="text-xl font-bold text-gray-800"
-					><span class="text-indigo-600">Africa Curated</span> <span class="text-gray-400">| Art Gallery</span></a
+					><span class="text-indigo-600">Africa Curated</span>
+					<span class="text-gray-400">| Art Gallery</span></a
 				>
 			</div>
 
 			<!-- Desktop Menu -->
-			<div class="hidden items-center space-x-8 lg:flex">
+			<div class="hidden items-center space-x-2 lg:flex">
 				{#each navOptions as option}
-					<a href={option.href} class="group relative text-gray-600 hover:text-gray-900" class:text-gray-900={isActive(option.href)}>
+					<a
+						href={option.href}
+						class="group relative px-3 py-5 text-gray-600 hover:text-gray-900"
+						class:text-gray-900={isActive(option.href)}
+					>
 						<p class="capitalize">{option.label}</p>
 						<span
-							class="absolute top-8 h-1 w-full origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
+							class="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 rounded-lg bg-indigo-500 duration-200 group-hover:scale-x-100"
 							class:scale-x-100={isActive(option.href)}
 							class:scale-x-0={!isActive(option.href)}
 						></span>
@@ -83,7 +92,9 @@
 
 	<!-- Mobile Menu -->
 	{#if isOpen}
-		<div class="absolute top-12 z-20 h-fit w-full bg-[#e6e6e6] px-4 pt-2 pb-3 lg:hidden border-y border-stone-400">
+		<div
+			class="absolute top-12 z-20 h-fit w-full border-y border-stone-400 bg-[#e6e6e6] px-4 pt-2 pb-3 lg:hidden"
+		>
 			{#each navOptions as option}
 				<a
 					href={option.href}

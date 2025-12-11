@@ -11,6 +11,7 @@
 	let availableFrames: any = $state([]);
 
 	let selectedFrame: any = $state(null);
+	let selectedImage: string = $state('');
 	let loading: boolean = $state(true);
 
 	onMount(async () => {
@@ -81,6 +82,7 @@
 						});
 				});
 		}
+		selectedImage = artwork.imageUrl;
 		loading = false;
 	});
 
@@ -97,6 +99,14 @@
 		const data = localStorage.getItem(key);
 		return data ? JSON.parse(data) : null;
 	};
+
+	const handleSelectedArtwork = (url: string) => {
+		selectedImage = url;
+	};
+
+	const goBack = () => {
+		history.back();
+	};
 </script>
 
 <section>
@@ -104,11 +114,9 @@
 		class="col-span-12 grid border-r-2 border-stone-400 md:col-span-10 md:grid-cols-2 lg:grid-cols-4"
 	>
 		{#if loading}
-			<!-- Skeleton version of artwork detail section -->
 			<div
 				class="col-span-12 grid border-r-2 border-stone-400 md:col-span-10 md:grid-cols-2 lg:grid-cols-4"
 			>
-				<!-- Image Skeleton -->
 				<div
 					class="col-span-2 w-full border-r-2 border-b-2 border-stone-400 bg-stone-300 py-16 md:py-32"
 				>
@@ -119,16 +127,13 @@
 					</div>
 				</div>
 
-				<!-- Text and Frame Skeleton -->
 				<div class="col-span-2 w-full border-b-2 border-stone-400 pt-4 sm:text-2xl">
 					<div class="md:mx-24">
-						<!-- Title and Artist Skeleton -->
 						<div class="mb-12 border-b-2 border-stone-400 px-4 pb-4">
 							<Skeleton class="mb-2 h-8 w-1/2 bg-gray-400" />
 							<Skeleton class="h-6 w-2/3 bg-gray-400" />
 						</div>
 
-						<!-- Frame Selection Skeleton -->
 						<div class="mb-12 flex w-full flex-col gap-4 border-b-2 border-stone-400 pb-4">
 							<div class="flex flex-col gap-2 px-4">
 								<h3 class="text-xl">Frame Selection:</h3>
@@ -148,7 +153,6 @@
 							</div>
 						</div>
 
-						<!-- Description Skeleton -->
 						<div class="px-4 pb-4">
 							<h3 class="text-xl">Description:</h3>
 							<div class="space-y-2">
@@ -162,19 +166,65 @@
 			</div>
 		{:else}
 			<div
-				class="col-span-2 w-full border-r-2 border-b-2 border-stone-400 bg-stone-300 py-16 md:py-32"
+				class="col-span-2 w-full border-r-2 border-b-2 border-stone-400 bg-stone-300 pt-14 md:pt-16"
+				class:py-16={!artwork.subImageUrls}
 			>
 				<div class="m-auto border-stone-400">
 					<img
-						src={`https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/${artwork.imageUrl}`}
+						src={`https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/${selectedImage}`}
 						alt={artwork.title}
 						class="borderimg m-auto max-h-[30rem] max-w-[42rem] shadow-2xl shadow-stone-500 max-sm:max-h-72 max-sm:max-w-80 lg:w-auto"
-						style={selectedFrame ? `border-image-source: url('${selectedFrame.imageUrl}')` : ''}
+						style={selectedFrame && artwork.imageUrl === selectedImage
+							? `border-image-source: url('${selectedFrame.imageUrl}')`
+							: ''}
 					/>
 				</div>
+				{#if artwork.subImageUrls && artwork.subImageUrls.length > 0}
+					<div
+						class="mt-16 grid grid-cols-4 place-items-center border-t border-stone-400 px-16 py-6"
+					>
+						<button
+							onclick={() => handleSelectedArtwork(artwork.imageUrl)}
+							class="flex h-30 w-30 cursor-pointer rounded border-2 duration-200 hover:border-indigo-500 hover:bg-stone-100"
+							class:border-indigo-500={artwork.imageUrl === selectedImage}
+							class:bg-stone-100={artwork.imageUrl === selectedImage}
+							class:border-stone-400={artwork.imageUrl !== selectedImage}
+							class:bg-stone-200={artwork.imageUrl !== selectedImage}
+						>
+							<img
+								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${artwork.imageUrl}`}
+								alt={artwork.title}
+								class="borderimg m-auto max-h-28 max-w-28"
+							/>
+						</button>
+						{#each artwork.subImageUrls as subImage}
+							<button
+								onclick={() => handleSelectedArtwork(subImage)}
+								class="flex h-30 w-30 cursor-pointer rounded border-2 duration-200 hover:border-indigo-500 hover:bg-stone-100"
+								class:border-indigo-500={subImage === selectedImage}
+								class:bg-stone-100={subImage === selectedImage}
+								class:border-stone-400={subImage !== selectedImage}
+								class:bg-stone-200={subImage !== selectedImage}
+							>
+								<img
+									src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${subImage}`}
+									alt={artwork.title}
+									class="borderimg m-auto max-h-28 max-w-28"
+								/>
+							</button>
+						{/each}
+					</div>
+				{/if}
 			</div>
-			<div class="col-span-2 w-full border-b-2 border-stone-400 py-8 sm:text-2xl">
-				<div class="md:mx-24">
+			<div class="col-span-2 w-full border-b-2 border-stone-400 py-2 sm:text-2xl">
+				<button
+					onclick={goBack}
+					class="mx-2 flex cursor-pointer text-base duration-200 hover:text-indigo-700"
+				>
+					<Icon icon="radix-icons:arrow-left" class="m-auto text-2xl"></Icon>
+					Go Back
+				</button>
+				<div class="py-8 md:mx-24">
 					<div class="mb-12 border-b-2 border-stone-400 px-4 pb-4">
 						<h2 class="text-3xl">{artwork.title}</h2>
 						<h3 class="text-xl">By: {artwork.artist}</h3>
