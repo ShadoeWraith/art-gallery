@@ -14,5 +14,6 @@
 		"client-dynamodb": "github:aws-sdk/client-dynamodb",
 		"lib-dynamodb": "github:aws-sdk/lib-dynamodb",
 		"uuid": "^13.0.0"
-	}
+	},
+	"keywords": []
 }

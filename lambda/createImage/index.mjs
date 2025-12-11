@@ -1,8 +1,10 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { PutCommand } from 'lib-dynamodb';
+import { v4 as uuidv4 } from 'uuid';
 
-const client = new DynamoDBClient({ region: process.env.AWS_REGION });
-const docClient = DynamoDBDocumentClient.from(client);
+const dbClient = new DynamoDBClient({ region: process.env.AWS_REGION });
+const docClient = DynamoDBDocumentClient.from(dbClient);
 
 const tableName = process.env.tableName || 'Artwork';
 
@@ -16,29 +18,48 @@ const createResponse = (statusCode, body) => {
 };
 
 export const handler = async (event) => {
-	const { pathParameters } = event;
-	const { id } = pathParameters || {};
+	let body;
 
 	try {
-		let command;
-
-		if (id) {
-			command = new GetCommand({
-				TableName: tableName,
-				Key: {
-					id: id
-				}
-			});
+		if (typeof event.body === 'string') {
+			body = JSON.parse(event.body);
+		} else if (typeof event.body === 'object' && event.body !== null) {
+			body = event.body;
 		} else {
-			command = new ScanCommand({
-				TableName: tableName
-			});
+			body = event;
 		}
-
-		const response = await docClient.send(command);
-		return createResponse(200, response);
 	} catch (error) {
-		console.error('DynamoDB getImage error:', error);
-		return createResponse(500, { error: error.message });
+		return createResponse(400, { error: 'Invalid JSON format in request body' });
+	}
+
+	const { artist, description, frameIds, tags, title, imageUrl, featured } = body;
+
+	if (!artist || !imageUrl || !title) {
+		return createResponse(409, { error: 'Missing required attributes for the request' });
+	}
+
+	const command = new PutCommand({
+		TableName: tableName,
+		Item: {
+			id: uuidv4(),
+			active: true,
+			artist,
+			description,
+			frameIds,
+			imageUrl,
+			tags,
+			title,
+			featured
+		},
+		ConditionExpression: 'attribute_not_exists(id)'
+	});
+
+	try {
+		const response = await docClient.send(command);
+		return createResponse(201, { message: 'Image created successfully!', response });
+	} catch (error) {
+		if (error.message === 'The conditional request failed')
+			return createResponse(409, { error: 'Image already exists!' });
+		else return createResponse(500, { error: 'Internal Server Error!', message: error.message });
 	}
 };

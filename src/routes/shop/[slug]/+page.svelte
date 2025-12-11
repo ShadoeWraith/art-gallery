@@ -166,7 +166,7 @@
 			>
 				<div class="m-auto border-stone-400">
 					<img
-						src={artwork.imageUrl}
+						src={`https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/${artwork.imageUrl}`}
 						alt={artwork.title}
 						class="borderimg m-auto max-h-[30rem] max-w-[42rem] shadow-2xl shadow-stone-500 max-sm:max-h-72 max-sm:max-w-80 lg:w-auto"
 						style={selectedFrame ? `border-image-source: url('${selectedFrame.imageUrl}')` : ''}

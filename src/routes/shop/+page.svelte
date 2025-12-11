@@ -364,7 +364,7 @@
 					>
 						<div class="h-80 mx-4 p-6 bg-stone-300 m-auto rounded">
 							<img
-								src={art.imageUrl}
+								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
 								alt={`image of ${art.title} by: ${art.artist}`}
 								class="m-auto h-full bg-transparent object-contain"
 							/>

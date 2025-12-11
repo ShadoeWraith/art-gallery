@@ -1,4 +1,4 @@
-# Africa Curated (working title from client)
+# Africa Curated | Art Gallery
 
 **_A Repo With Client Permission To Make Public_**
 
@@ -10,7 +10,7 @@ It's an art gallery website to showcase artwork from African artists. Inquire ab
 
 ## Some of the Art
 
-Here are 3 examples of the artowork on the site.
+Here are 3 examples of the artwork on the site.
 
 Go here to see more from [Africa Curated](https://main.d11w62pdls1j5i.amplifyapp.com/)
 

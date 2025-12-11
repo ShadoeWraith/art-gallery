@@ -4,8 +4,21 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 const client = new S3Client({ region: process.env.AWS_REGION });
 
 export const handler = async (event) => {
-	const prefix = event.queryStringParameters.prefix;
-	const title = event.queryStringParameters.title;
+	let body;
+
+	try {
+		if (typeof event.body === 'string') {
+			body = JSON.parse(event.body);
+		} else if (typeof event.body === 'object' && event.body !== null) {
+			body = event.body;
+		} else {
+			body = event;
+		}
+	} catch (error) {
+		return createResponse(400, { error: 'Invalid JSON format in request body' });
+	}
+
+	const { prefix, title } = body;
 
 	const command = new PutObjectCommand({
 		Bucket: 'artgallery-images',
