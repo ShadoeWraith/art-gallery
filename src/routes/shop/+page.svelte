@@ -15,7 +15,7 @@
 		const fullUrl = `/api/proxy/images${queryParams ? `${queryParams}` : ''}`;
 		const cached = loadFromLocalStorage('artworkData');
 
-		if (cached && cached.fullUrl === fullUrl) {
+		if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== "/api/proxy/images") {
 			artwork = cached.items;
 			startKey = cached.startKey;
 			loading = false;
