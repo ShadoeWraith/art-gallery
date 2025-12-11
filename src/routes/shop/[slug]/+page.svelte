@@ -20,6 +20,7 @@
 
 		if (state.art !== undefined) {
 			artwork = state.art;
+			selectedImage = artwork.imageUrl;
 
 			const cached = loadFromLocalStorage('frames');
 
@@ -54,6 +55,7 @@
 					artwork = json.Items[0];
 				})
 				.then(async () => {
+					selectedImage = artwork.imageUrl;
 					const cached = loadFromLocalStorage('frames');
 
 					if (cached) {
@@ -82,7 +84,6 @@
 						});
 				});
 		}
-		selectedImage = artwork.imageUrl;
 		loading = false;
 	});
 

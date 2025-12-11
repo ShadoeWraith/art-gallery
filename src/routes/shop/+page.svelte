@@ -175,8 +175,6 @@
 	const handleArtwork = (art: any) => {
 		const artCopy = JSON.parse(JSON.stringify(art));
 
-		console.log(artCopy);
-
 		goto(`/shop/${art.id}`, {
 			state: { art: artCopy }
 		});
