@@ -15,7 +15,7 @@
 
 <section class="border-b border-stone-200">
 	<Carousel.Root
-		class="relative m-auto hidden overflow-hidden md:flex lg:h-[85vh]"
+		class="relative m-auto overflow-hidden md:flex lg:h-[85vh]"
 		opts={{ align: 'start', loop: true }}
 		plugins={[Autoplay({ delay: 8000 }), Fade()]}
 	>
@@ -68,10 +68,10 @@
 		</Carousel.Content>
 
 		<Carousel.Previous
-			class="absolute left-6 z-[60] h-12 w-12 border-none bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+			class="absolute left-6 z-[60] hidden h-12 w-12 border-none bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40 md:flex"
 		/>
 		<Carousel.Next
-			class="absolute right-6 z-[60] h-12 w-12 border-none bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+			class="absolute right-6 z-[60] hidden h-12 w-12 border-none bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40 md:flex"
 		/>
 	</Carousel.Root>
 </section>

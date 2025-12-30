@@ -212,18 +212,6 @@
 		</h1>
 	</div>
 
-	<div
-		class="flex items-center justify-between border-b border-stone-200 bg-stone-50 p-4 lg:hidden"
-	>
-		<span class="text-sm tracking-widest text-stone-500 uppercase">Filter Artworks</span>
-		<button
-			onclick={() => (showFilters = !showFilters)}
-			class="text-sm font-bold tracking-tighter uppercase underline underline-offset-4"
-		>
-			{showFilters ? 'Close' : 'Filter'}
-		</button>
-	</div>
-
 	<div class="grid grid-cols-12">
 		{#if isMobileMenuOpen}
 			<div
@@ -235,226 +223,231 @@
 
 		<aside
 			class="
-        /* DESKTOP SIDEBAR */
-        /* MOBILE BOTTOM SHEET */ fixed inset-x-0 bottom-0 z-[70] flex flex-col rounded-t-3xl
+        /* MOBILE BOTTOM SHEET */
+        /* DESKTOP SIDEBAR */ fixed inset-x-0 bottom-0 z-[70] flex h-[85vh] flex-col
+        rounded-t-3xl border-t border-stone-200
         
-        border-t border-stone-200 bg-white transition-transform duration-500
-        ease-[cubic-bezier(0.32,0.72,0,1)] lg:visible lg:sticky lg:top-20 lg:z-10 lg:col-span-2 lg:flex lg:h-[calc(100vh-5rem)] lg:translate-y-0 lg:flex-col lg:border-r lg:bg-white lg:opacity-100
+        bg-white transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+        lg:visible lg:sticky lg:top-20 lg:z-10 lg:col-span-2 lg:flex lg:h-[calc(100vh-5rem)] lg:translate-y-0 lg:rounded-none lg:border-t-0 lg:border-r
+        
         {isMobileMenuOpen ? 'translate-y-0' : 'translate-y-full'}
-        lg:rounded-none lg:border-t-0
     "
 		>
-			<div class="flex w-full items-center justify-center py-4 lg:hidden">
-				<div class="h-1.5 w-12 rounded-full bg-stone-200"></div>
-			</div>
+			<div class="flex w-full items-center border-b border-stone-100 px-8 py-6">
+				<div class="flex flex-1 items-baseline justify-between pr-4">
+					<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Filter By</h4>
+					{#if page.url.searchParams.size > 0}
+						<button
+							onclick={clearFilters}
+							class="text-[9px] font-bold tracking-widest text-red-700 uppercase underline underline-offset-[3px] transition-colors hover:text-red-800"
+						>
+							Clear All
+						</button>
+					{/if}
+				</div>
 
-			<div class="flex w-full items-center border-b border-stone-100 px-8 py-5">
-				<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Refine By</h4>
 				<button
-					onclick={clearFilters}
-					class="ml-auto text-[10px] font-bold tracking-widest text-red-700 uppercase underline underline-offset-4"
+					onclick={() => (isMobileMenuOpen = false)}
+					class="flex h-10 w-10 items-center justify-center rounded-full bg-stone-50 lg:hidden"
 				>
-					Clear All
+					<span class="rotate-45 text-2xl leading-none font-light text-stone-400">+</span>
 				</button>
 			</div>
 
-			<div class="flex h-full flex-col bg-white lg:sticky lg:top-24 lg:h-[calc(100vh-120px)]">
-				<div class="custom-scrollbar flex-1 overflow-y-auto overscroll-contain px-2 pb-32">
-					<Collapsible.Root open>
-						<Collapsible.Trigger
-							class="group w-full border-b border-stone-100 px-6 py-5 transition-colors hover:bg-stone-50"
-						>
-							<div class="flex w-full items-center">
-								<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
-									Orientation
-								</h4>
-								<div class="ml-auto flex items-center gap-4">
-									<button
-										onclick={(e) => {
-											e.stopPropagation();
-											resetFilter('orientation');
-										}}
-										class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
-									>
-										Reset
-									</button>
-									<span
-										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
-									>
-										+
-									</span>
-								</div>
+			<div class="custom-scrollbar flex-1 overflow-y-auto overscroll-contain px-2 pb-32">
+				<Collapsible.Root open>
+					<Collapsible.Trigger
+						class="group w-full border-b border-stone-100 px-6 py-5 transition-colors hover:bg-stone-50"
+					>
+						<div class="flex w-full items-baseline">
+							<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
+								Orientation
+							</h4>
+							<div class="ml-auto flex items-center gap-4">
+								<button
+									onclick={(e) => {
+										e.stopPropagation();
+										resetFilter('tags');
+									}}
+									class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-[3px] hover:text-stone-900"
+								>
+									Reset
+								</button>
+								<span
+									class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
+									>+</span
+								>
 							</div>
-						</Collapsible.Trigger>
-
-						<Collapsible.Content
-							class="data-[state=closed]:animate-collapse data-[state=open]:animate-expand overflow-hidden transition-all"
-						>
-							<div class="flex flex-col space-y-0.5 py-2">
-								{#each orientation as o}
-									<button
-										onclick={() => handleFilters('tags', o)}
-										class="flex w-full items-center gap-4 px-6 py-3 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
-										class:bg-stone-50={page.url.searchParams.get('tags') === o}
+						</div>
+					</Collapsible.Trigger>
+					<Collapsible.Content class="overflow-hidden">
+						<div class="flex flex-col space-y-0.5 py-2">
+							{#each orientation as o}
+								<button
+									onclick={() => handleFilters('tags', o)}
+									class="flex w-full items-center gap-4 px-6 py-4 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
+									class:bg-stone-50={page.url.searchParams.get('tags')?.split(',').includes(o)}
+								>
+									<div
+										class="flex h-4 w-4 shrink-0 items-center justify-center border border-stone-200 bg-white"
 									>
 										<div
-											class="flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-stone-200 bg-white"
-										>
-											<div
-												class="h-1.5 w-1.5 bg-stone-900 transition-all duration-300"
-												class:scale-100={page.url.searchParams.get('tags') === o}
-												class:scale-0={page.url.searchParams.get('tags') !== o}
-											></div>
-										</div>
-										<span
-											class={page.url.searchParams.get('tags') === o
-												? 'font-bold text-stone-900'
-												: 'text-stone-500'}>{o}</span
-										>
-									</button>
-								{/each}
-							</div>
-						</Collapsible.Content>
-					</Collapsible.Root>
-
-					<Collapsible.Root open>
-						<Collapsible.Trigger
-							class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
-						>
-							<div class="flex w-full items-center">
-								<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
-									Color
-								</h4>
-								<div class="ml-auto flex items-center gap-4">
-									<button
-										onclick={(e) => {
-											e.stopPropagation();
-											resetFilter('tags');
-										}}
-										class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
-									>
-										Reset
-									</button>
-									<span
-										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
-										>+</span
-									>
-								</div>
-							</div>
-						</Collapsible.Trigger>
-						<Collapsible.Content class="overflow-hidden">
-							<div class="grid grid-cols-1 py-2">
-								{#each colors as color}
-									<button
-										onclick={() => handleFilters('tags', color.label)}
-										class="flex w-full items-center gap-4 px-6 py-3 text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
-										class:bg-stone-50={page.url.searchParams.get('tags')?.includes(color.label)}
-									>
-										<div
-											class={`h-2.5 w-2.5 shrink-0 rounded-full ring-1 ring-transparent ring-offset-2 transition-all ${color.color} ${page.url.searchParams.get('tags')?.includes(color.label) ? 'ring-stone-400' : ''}`}
+											class="h-2 w-2 bg-stone-900 transition-all duration-300
+                {page.url.searchParams.get('tags')?.split(',').includes(o)
+												? 'scale-100'
+												: 'scale-0'}"
 										></div>
-										<span
-											class={page.url.searchParams.get('tags')?.includes(color.label)
-												? 'font-bold text-stone-900'
-												: 'text-stone-500'}>{color.label}</span
-										>
-									</button>
-								{/each}
-							</div>
-						</Collapsible.Content>
-					</Collapsible.Root>
-
-					<Collapsible.Root open>
-						<Collapsible.Trigger
-							class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
-						>
-							<div class="flex w-full items-center">
-								<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
-									Artist
-								</h4>
-								<div class="ml-auto flex items-center gap-4">
-									<button
-										onclick={(e) => {
-											e.stopPropagation();
-											resetFilter('artist');
-										}}
-										class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
-									>
-										Reset
-									</button>
+									</div>
 									<span
-										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
-										>+</span
+										class={page.url.searchParams.get('tags')?.split(',').includes(o)
+											? 'font-bold text-stone-900'
+											: 'text-stone-500'}
 									>
-								</div>
+										{o}
+									</span>
+								</button>
+							{/each}
+						</div>
+					</Collapsible.Content>
+				</Collapsible.Root>
+
+				<Collapsible.Root open>
+					<Collapsible.Trigger
+						class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
+					>
+						<div class="flex w-full items-baseline">
+							<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Color</h4>
+							<div class="ml-auto flex items-center gap-4">
+								<button
+									onclick={(e) => {
+										e.stopPropagation();
+										resetFilter('tags');
+									}}
+									class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-[3px] hover:text-stone-900"
+								>
+									Reset
+								</button>
+								<span
+									class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
+									>+</span
+								>
 							</div>
-						</Collapsible.Trigger>
-						<Collapsible.Content class="overflow-hidden">
-							<div class="flex flex-col py-2">
-								{#each artists as artist}
-									{@const fullName = `${artist.firstName} ${artist.lastName}`}
-									<button
-										onclick={() => handleFilters('artist', fullName)}
-										class="w-full px-6 py-3 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
-										class:text-stone-900={page.url.searchParams.get('artist') === fullName}
-										class:font-bold={page.url.searchParams.get('artist') === fullName}
-										class:text-stone-500={page.url.searchParams.get('artist') !== fullName}
+						</div>
+					</Collapsible.Trigger>
+					<Collapsible.Content class="overflow-hidden">
+						<div class="grid grid-cols-1 py-2">
+							{#each colors as color}
+								<button
+									onclick={() => handleFilters('tags', color.label)}
+									class="flex w-full items-center gap-4 px-6 py-4 text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
+								>
+									<div
+										class={`h-3 w-3 shrink-0 rounded-full ring-1 ring-transparent ring-offset-2 transition-all ${color.color} ${page.url.searchParams.get('tags')?.includes(color.label) ? 'ring-stone-400' : ''}`}
+									></div>
+									<span
+										class={page.url.searchParams.get('tags')?.includes(color.label)
+											? 'font-bold text-stone-900'
+											: 'text-stone-500'}>{color.label}</span
 									>
-										{fullName}
-									</button>
-								{/each}
+								</button>
+							{/each}
+						</div>
+					</Collapsible.Content>
+				</Collapsible.Root>
+
+				<Collapsible.Root open>
+					<Collapsible.Trigger
+						class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
+					>
+						<div class="flex w-full items-baseline">
+							<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
+								Artist
+							</h4>
+							<div class="ml-auto flex items-center gap-4">
+								<button
+									onclick={(e) => {
+										e.stopPropagation();
+										resetFilter('artist');
+									}}
+									class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-[3px] hover:text-stone-900"
+								>
+									Reset
+								</button>
+								<span
+									class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
+									>+</span
+								>
 							</div>
-						</Collapsible.Content>
-					</Collapsible.Root>
-				</div>
+						</div>
+					</Collapsible.Trigger>
+					<Collapsible.Content class="overflow-hidden">
+						<div class="flex flex-col py-2">
+							{#each artists as artist}
+								{@const fullName = `${artist.firstName} ${artist.lastName}`}
+								<button
+									onclick={() => handleFilters('artist', fullName)}
+									class="w-full px-6 py-4 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
+									class:text-stone-900={page.url.searchParams
+										.get('artist')
+										?.split(',')
+										.includes(fullName)}
+									class:font-bold={page.url.searchParams
+										.get('artist')
+										?.split(',')
+										.includes(fullName)}
+									class:text-stone-500={!page.url.searchParams
+										.get('artist')
+										?.split(',')
+										.includes(fullName)}
+								>
+									{fullName}
+								</button>
+							{/each}
+						</div>
+					</Collapsible.Content>
+				</Collapsible.Root>
 			</div>
 
-			<style>
-				/* Clean custom scrollbar for better UX */
-				.custom-scrollbar::-webkit-scrollbar {
-					width: 3px;
-				}
-				.custom-scrollbar::-webkit-scrollbar-track {
-					background: transparent;
-				}
-				.custom-scrollbar::-webkit-scrollbar-thumb {
-					background: #e5e7eb; /* stone-200 */
-					border-radius: 10px;
-				}
-				.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-					background: #d6d3d1; /* stone-300 */
-				}
-
-				/* Optional: Prevent body scroll when side panel is open on mobile */
-				:global(body:has(.max-h-full)) {
-					overflow: hidden;
-				}
-			</style>
-
-			<div class="fixed bottom-0 left-0 w-full border-t border-stone-100 bg-white p-4 lg:hidden">
+			<div class="mt-auto border-t border-stone-100 bg-white p-6 lg:hidden">
 				<button
 					onclick={() => (isMobileMenuOpen = false)}
-					class="w-full bg-stone-900 py-5 text-[11px] font-bold tracking-[0.3em] text-white uppercase shadow-lg transition-transform active:scale-[0.98]"
+					class="w-full bg-stone-900 py-5 text-[11px] font-bold tracking-[0.3em] text-white uppercase shadow-xl transition-transform active:scale-[0.98]"
 				>
 					Apply & Show Results
 				</button>
 			</div>
 		</aside>
 
+		<style>
+			.custom-scrollbar::-webkit-scrollbar {
+				width: 3px;
+			}
+			.custom-scrollbar::-webkit-scrollbar-thumb {
+				background: #e5e7eb;
+				border-radius: 10px;
+			}
+			/* Prevent body scroll when menu is open */
+			:global(body:has(.translate-y-0)) {
+				overflow: hidden;
+			}
+		</style>
+
 		<button
 			onclick={() => (isMobileMenuOpen = true)}
-			class="fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full bg-stone-900 px-10 py-5 text-[10px] font-bold tracking-[0.2em] text-white shadow-2xl transition-all duration-300 active:scale-90 lg:hidden"
+			class="fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full border border-stone-400 bg-white/70 px-8 py-4 text-[9px] font-bold tracking-[0.3em] text-stone-900 shadow-xl shadow-black/20 backdrop-blur-sm transition-all duration-300 active:scale-95 lg:hidden"
 			class:opacity-0={isMobileMenuOpen}
 			class:pointer-events-none={isMobileMenuOpen}
 		>
-			<Icon icon="ph:sliders-horizontal-light" class="text-sm" />
-			FILTERS
+			<Icon icon="ph:sliders-horizontal-bold" class="text-xs" />
+			<span>FILTER</span>
+
 			{#if page.url.searchParams.size > 0}
-				<span
-					class="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[9px] font-bold text-stone-900"
-				>
-					{page.url.searchParams.size}
-				</span>
+				<div class="flex items-center gap-1.5">
+					<span class="h-1 w-1 rounded-full bg-stone-900"></span>
+					<span class="text-[8px] font-medium tracking-normal text-stone-500">
+						({page.url.searchParams.size})
+					</span>
+				</div>
 			{/if}
 		</button>
 
