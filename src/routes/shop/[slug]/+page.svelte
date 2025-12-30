@@ -2,7 +2,6 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { load } from '../+page.js';
 
 	const { data } = $props();
 
@@ -18,7 +17,8 @@
 		const state = history.state?.['sveltekit:states'];
 		let json;
 
-		if (state.art !== undefined) {
+		if (state !== undefined && state.length > 0) {
+			console.log(state);
 			artwork = state.art;
 			selectedImage = artwork.imageUrl;
 

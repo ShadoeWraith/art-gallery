@@ -1,7 +1,26 @@
-<script>
+<script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.ts';
+	import { onMount } from 'svelte';
 
-	const artists = $state([{ name: 'First Last' }, { name: 'Artist Name' }]);
+	let artists: any[] = $state([]);
+
+	onMount(async () => {
+		const res = await fetch('/api/proxy/artist');
+		const json = await res.json();
+
+		artists = json;
+
+		console.log(artists);
+	});
+
+	const handleArtist = (artist: any) => {
+		const artistCopy = JSON.parse(JSON.stringify(artist));
+
+		goto(`/artists/${artist.id}`, {
+			state: { art: artistCopy }
+		});
+	};
 </script>
 
 <section>
@@ -11,11 +30,12 @@
 	<div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 		{#each artists as artist}
 			<a
-				href={`/shop?artist=${artist.name}`}
+				href={`/artists/${artist.id}`}
+				onclick={() => handleArtist(artist)}
 				class="w-full border-r-2 border-b-2 border-stone-400 py-8"
 			>
 				<div class="m-auto w-70">
-					<span class="text-lg uppercase">{artist.name}</span>
+					<span class="text-lg uppercase">{artist.firstName} {artist.lastName}</span>
 				</div>
 				<div class="m-auto mt-4 h-70 w-70">
 					<Skeleton class="m-auto h-full w-full bg-gray-400" />

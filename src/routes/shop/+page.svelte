@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-	import { onMount } from 'svelte';
-	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { goto } from '$app/navigation';
+	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { onMount } from 'svelte';
 
 	const { data } = $props();
 	let queryParams = data.queryParams;
@@ -369,8 +369,8 @@
 							/>
 						</div>
 						<div class="m-auto w-full px-4 pt-2">
-							<h4 class="w-fit font-semibold uppercase">{art.artist}</h4>
-							<h3 class="text-2xl">{art.title}</h3>
+							<h3 class="text-xl font-semibold text-gray-800">{art.title}</h3>
+							<h4 class="w-fit text-xs font-semibold text-gray-600 uppercase">By: {art.artist}</h4>
 						</div>
 					</a>
 				{/each}
