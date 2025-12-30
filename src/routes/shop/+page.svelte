@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import Filter from './Filter.svelte';
 
 	const { data } = $props();
 	let queryParams = data.queryParams;
@@ -73,6 +73,34 @@
 		{ label: 'Black', color: 'bg-black' }
 	]);
 	let orientation = $state(['Horizontal', 'Vertical']);
+
+	const filterSections = $derived([
+		{
+			title: 'Orientation',
+			key: 'tags',
+			items: orientation, // ['Horizontal', 'Vertical']
+			type: 'list'
+		},
+		{
+			title: 'Color',
+			key: 'tags',
+			items: colors, // Your array of {label, color}
+			type: 'color'
+		},
+		{
+			title: 'Size',
+			key: 'tags',
+			items: ['24x36', '36x48', '48x72', '72x96', '96x144'],
+			type: 'list'
+		},
+		{
+			title: 'Artist',
+			key: 'artist',
+			// Map artist objects to labels or pass as is if component handles it
+			items: artists.map((a: any) => ({ label: `${a.firstName} ${a.lastName}` })),
+			type: 'list'
+		}
+	]);
 
 	let showFilters: boolean = $state(false);
 
@@ -221,202 +249,13 @@
 			></div>
 		{/if}
 
-		<aside
-			class="
-        /* MOBILE BOTTOM SHEET */
-        /* DESKTOP SIDEBAR */ fixed inset-x-0 bottom-0 z-[70] flex h-[85vh] flex-col
-        rounded-t-3xl border-t border-stone-200
-        
-        bg-white transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
-        lg:visible lg:sticky lg:top-20 lg:z-10 lg:col-span-2 lg:flex lg:h-[calc(100vh-5rem)] lg:translate-y-0 lg:rounded-none lg:border-t-0 lg:border-r
-        
-        {isMobileMenuOpen ? 'translate-y-0' : 'translate-y-full'}
-    "
-		>
-			<div class="flex w-full items-center border-b border-stone-100 px-8 py-6">
-				<div class="flex flex-1 items-baseline justify-between pr-4">
-					<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Filter By</h4>
-					{#if page.url.searchParams.size > 0}
-						<button
-							onclick={clearFilters}
-							class="text-[9px] font-bold tracking-widest text-red-700 uppercase underline underline-offset-[3px] transition-colors hover:text-red-800"
-						>
-							Clear All
-						</button>
-					{/if}
-				</div>
-
-				<button
-					onclick={() => (isMobileMenuOpen = false)}
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-stone-50 lg:hidden"
-				>
-					<span class="rotate-45 text-2xl leading-none font-light text-stone-400">+</span>
-				</button>
-			</div>
-
-			<div class="custom-scrollbar flex-1 overflow-y-auto overscroll-contain px-2 pb-32">
-				<Collapsible.Root open>
-					<Collapsible.Trigger
-						class="group w-full border-b border-stone-100 px-6 py-5 transition-colors hover:bg-stone-50"
-					>
-						<div class="flex w-full items-baseline">
-							<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
-								Orientation
-							</h4>
-							<div class="ml-auto flex items-center gap-4">
-								<button
-									onclick={(e) => {
-										e.stopPropagation();
-										resetFilter('tags');
-									}}
-									class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-[3px] hover:text-stone-900"
-								>
-									Reset
-								</button>
-								<span
-									class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
-									>+</span
-								>
-							</div>
-						</div>
-					</Collapsible.Trigger>
-					<Collapsible.Content class="overflow-hidden">
-						<div class="flex flex-col space-y-0.5 py-2">
-							{#each orientation as o}
-								<button
-									onclick={() => handleFilters('tags', o)}
-									class="flex w-full items-center gap-4 px-6 py-4 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
-									class:bg-stone-50={page.url.searchParams.get('tags')?.split(',').includes(o)}
-								>
-									<div
-										class="flex h-4 w-4 shrink-0 items-center justify-center border border-stone-200 bg-white"
-									>
-										<div
-											class="h-2 w-2 bg-stone-900 transition-all duration-300
-                {page.url.searchParams.get('tags')?.split(',').includes(o)
-												? 'scale-100'
-												: 'scale-0'}"
-										></div>
-									</div>
-									<span
-										class={page.url.searchParams.get('tags')?.split(',').includes(o)
-											? 'font-bold text-stone-900'
-											: 'text-stone-500'}
-									>
-										{o}
-									</span>
-								</button>
-							{/each}
-						</div>
-					</Collapsible.Content>
-				</Collapsible.Root>
-
-				<Collapsible.Root open>
-					<Collapsible.Trigger
-						class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
-					>
-						<div class="flex w-full items-baseline">
-							<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Color</h4>
-							<div class="ml-auto flex items-center gap-4">
-								<button
-									onclick={(e) => {
-										e.stopPropagation();
-										resetFilter('tags');
-									}}
-									class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-[3px] hover:text-stone-900"
-								>
-									Reset
-								</button>
-								<span
-									class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
-									>+</span
-								>
-							</div>
-						</div>
-					</Collapsible.Trigger>
-					<Collapsible.Content class="overflow-hidden">
-						<div class="grid grid-cols-1 py-2">
-							{#each colors as color}
-								<button
-									onclick={() => handleFilters('tags', color.label)}
-									class="flex w-full items-center gap-4 px-6 py-4 text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
-								>
-									<div
-										class={`h-3 w-3 shrink-0 rounded-full ring-1 ring-transparent ring-offset-2 transition-all ${color.color} ${page.url.searchParams.get('tags')?.includes(color.label) ? 'ring-stone-400' : ''}`}
-									></div>
-									<span
-										class={page.url.searchParams.get('tags')?.includes(color.label)
-											? 'font-bold text-stone-900'
-											: 'text-stone-500'}>{color.label}</span
-									>
-								</button>
-							{/each}
-						</div>
-					</Collapsible.Content>
-				</Collapsible.Root>
-
-				<Collapsible.Root open>
-					<Collapsible.Trigger
-						class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
-					>
-						<div class="flex w-full items-baseline">
-							<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
-								Artist
-							</h4>
-							<div class="ml-auto flex items-center gap-4">
-								<button
-									onclick={(e) => {
-										e.stopPropagation();
-										resetFilter('artist');
-									}}
-									class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-[3px] hover:text-stone-900"
-								>
-									Reset
-								</button>
-								<span
-									class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
-									>+</span
-								>
-							</div>
-						</div>
-					</Collapsible.Trigger>
-					<Collapsible.Content class="overflow-hidden">
-						<div class="flex flex-col py-2">
-							{#each artists as artist}
-								{@const fullName = `${artist.firstName} ${artist.lastName}`}
-								<button
-									onclick={() => handleFilters('artist', fullName)}
-									class="w-full px-6 py-4 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
-									class:text-stone-900={page.url.searchParams
-										.get('artist')
-										?.split(',')
-										.includes(fullName)}
-									class:font-bold={page.url.searchParams
-										.get('artist')
-										?.split(',')
-										.includes(fullName)}
-									class:text-stone-500={!page.url.searchParams
-										.get('artist')
-										?.split(',')
-										.includes(fullName)}
-								>
-									{fullName}
-								</button>
-							{/each}
-						</div>
-					</Collapsible.Content>
-				</Collapsible.Root>
-			</div>
-
-			<div class="mt-auto border-t border-stone-100 bg-white p-6 lg:hidden">
-				<button
-					onclick={() => (isMobileMenuOpen = false)}
-					class="w-full bg-stone-900 py-5 text-[11px] font-bold tracking-[0.3em] text-white uppercase shadow-xl transition-transform active:scale-[0.98]"
-				>
-					Apply & Show Results
-				</button>
-			</div>
-		</aside>
+		<Filter
+			sections={filterSections}
+			{handleFilters}
+			{resetFilter}
+			{clearFilters}
+			bind:isMobileMenuOpen
+		/>
 
 		<style>
 			.custom-scrollbar::-webkit-scrollbar {

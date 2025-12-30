@@ -120,7 +120,7 @@
 								<Table.Cell>
 									<div class="h-16 w-16 border border-stone-200 bg-stone-100 p-1">
 										<img
-											src={art.imageUrl}
+											src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
 											alt={art.title}
 											class="h-full w-full object-contain mix-blend-multiply"
 										/>

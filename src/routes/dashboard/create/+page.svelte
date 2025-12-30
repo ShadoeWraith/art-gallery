@@ -165,7 +165,7 @@
 		<div
 			class="relative border-b border-stone-200 bg-stone-50 p-12 lg:col-span-5 lg:border-r lg:border-b-0"
 		>
-			<div class="sticky top-28 flex flex-col items-center">
+			<div class="top-28 flex flex-col items-center">
 				<div
 					class="group relative flex aspect-square w-full max-w-sm items-center justify-center border border-dashed border-stone-300 bg-white shadow-sm transition-colors hover:border-stone-400"
 				>
