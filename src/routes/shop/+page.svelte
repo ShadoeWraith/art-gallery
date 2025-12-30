@@ -250,14 +250,12 @@
 
 			<div class="flex w-full items-center border-b border-stone-100 px-8 py-5">
 				<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Refine By</h4>
-				{#if page.url.searchParams.size > 0}
-					<button
-						onclick={clearFilters}
-						class="ml-auto text-[10px] font-bold tracking-widest text-red-700 uppercase underline underline-offset-4"
-					>
-						Clear All
-					</button>
-				{/if}
+				<button
+					onclick={clearFilters}
+					class="ml-auto text-[10px] font-bold tracking-widest text-red-700 uppercase underline underline-offset-4"
+				>
+					Clear All
+				</button>
 			</div>
 
 			<div class="flex h-full flex-col bg-white lg:sticky lg:top-24 lg:h-[calc(100vh-120px)]">
@@ -271,17 +269,15 @@
 									Orientation
 								</h4>
 								<div class="ml-auto flex items-center gap-4">
-									{#if page.url.searchParams.get('orientation')}
-										<button
-											onclick={(e) => {
-												e.stopPropagation();
-												resetFilter('orientation');
-											}}
-											class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
-										>
-											Reset
-										</button>
-									{/if}
+									<button
+										onclick={(e) => {
+											e.stopPropagation();
+											resetFilter('orientation');
+										}}
+										class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
+									>
+										Reset
+									</button>
 									<span
 										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
 									>
@@ -330,17 +326,15 @@
 									Color
 								</h4>
 								<div class="ml-auto flex items-center gap-4">
-									{#if page.url.searchParams.get('tags')}
-										<button
-											onclick={(e) => {
-												e.stopPropagation();
-												resetFilter('tags');
-											}}
-											class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
-										>
-											Reset
-										</button>
-									{/if}
+									<button
+										onclick={(e) => {
+											e.stopPropagation();
+											resetFilter('tags');
+										}}
+										class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
+									>
+										Reset
+									</button>
 									<span
 										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
 										>+</span
@@ -379,17 +373,15 @@
 									Artist
 								</h4>
 								<div class="ml-auto flex items-center gap-4">
-									{#if page.url.searchParams.get('artist')}
-										<button
-											onclick={(e) => {
-												e.stopPropagation();
-												resetFilter('artist');
-											}}
-											class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
-										>
-											Reset
-										</button>
-									{/if}
+									<button
+										onclick={(e) => {
+											e.stopPropagation();
+											resetFilter('artist');
+										}}
+										class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
+									>
+										Reset
+									</button>
 									<span
 										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
 										>+</span
