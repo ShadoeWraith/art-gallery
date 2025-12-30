@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button.svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { signOutRedirect, userManager } from '$lib/userManager';
@@ -48,19 +49,8 @@
 				<Icon icon="ph:plus-light" class="text-lg" />
 				Add Artwork
 			</a>
-			<button
-				onclick={signOut}
-				class="group relative overflow-hidden border border-stone-900 px-6 py-2 transition-all"
-			>
-				<span
-					class="relative z-10 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors duration-300 group-hover:text-white"
-				>
-					Sign Out
-				</span>
-				<div
-					class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0"
-				></div>
-			</button>
+
+			<Button label="Sign Out" onclick={signOut} size="sm" />
 		</div>
 	</div>
 

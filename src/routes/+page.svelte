@@ -8,6 +8,7 @@
 	import elephants from '$lib/assets/50.jpg';
 	import boats from '$lib/assets/63.jpg';
 	import kids from '$lib/assets/85.jpg';
+	import Button from '$lib/components/ui/button.svelte';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
@@ -135,15 +136,7 @@
 	</div>
 
 	<div class="flex justify-center border-t border-stone-100 py-12">
-		<a
-			href="/shop"
-			class="group relative overflow-hidden border border-stone-900 px-8 py-3 transition-all hover:text-white"
-		>
-			<span class="relative z-10 text-sm tracking-widest uppercase">Explore the Collection</span>
-			<div
-				class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 group-hover:translate-y-0"
-			></div>
-		</a>
+		<Button href="/shop" label="View All Artwork" size="lg" />
 	</div>
 </section>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button.svelte';
 	import Icon from '@iconify/svelte';
 
 	// --- State Management ---
@@ -145,22 +146,20 @@
 
 <section class="min-h-screen bg-white font-serif text-stone-900">
 	<header
-		class="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b border-stone-200 bg-white px-8"
+		class="sticky top-[5.125rem] z-40 flex h-16 w-full items-center justify-between border-b border-stone-200 bg-white/90 px-8 backdrop-blur-md"
 	>
-		<div class="flex items-center gap-4">
-			<a href="/dashboard" class="text-stone-400 transition-colors hover:text-stone-900"
-				><Icon icon="ph:arrow-left" /></a
+		<div class="flex items-center">
+			<a
+				href="/dashboard"
+				class="flex items-center gap-2 text-[10px] tracking-[0.2em] text-stone-400 uppercase transition-colors hover:text-stone-900"
 			>
-			<h1 class="text-[10px] font-bold tracking-[0.4em] uppercase">Archive Portal</h1>
+				<Icon icon="ph:arrow-left-light" class="text-lg" />
+				Back to Dashboard
+			</a>
 		</div>
-		<button
-			onclick={handleSave}
-			class="border border-stone-900 px-10 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-stone-900 hover:text-white"
-		>
-			Save Asset
-		</button>
-	</header>
 
+		<Button onclick={handleSave} label="Save Asset" size="sm" />
+	</header>
 	<div class="grid grid-cols-1 lg:grid-cols-12">
 		<div
 			class="relative border-b border-stone-200 bg-stone-50 p-12 lg:col-span-5 lg:border-r lg:border-b-0"

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import Button from '$lib/components/ui/button.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
@@ -72,7 +73,7 @@
 		{ label: 'White', color: 'bg-white' },
 		{ label: 'Black', color: 'bg-black' }
 	]);
-	let orientation = $state(['Horizontal', 'Vertical']);
+	let orientation = $state(['Horizontal', 'Vertical', 'Square']);
 
 	const filterSections = $derived([
 		{
@@ -349,20 +350,12 @@
 
 			{#if startKey}
 				<div class="flex justify-center border-t border-stone-100 py-20">
-					<button
-						disabled={loadMoreDisabled}
+					<Button
 						onclick={handleLoadMore}
-						class="group relative overflow-hidden border border-stone-900 px-12 py-3 transition-colors duration-300 disabled:border-stone-200 disabled:text-stone-300"
-					>
-						<span
-							class="relative z-10 text-xs tracking-[0.3em] uppercase transition-colors duration-300 group-hover:text-white"
-						>
-							{loadMoreDisabled ? 'Loading...' : 'Load More Works'}
-						</span>
-						<div
-							class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0 disabled:hidden"
-						></div>
-					</button>
+						disabled={loadMoreDisabled}
+						label="Load More Works"
+						loadingText="Loading..."
+					/>
 				</div>
 			{/if}
 		</div>

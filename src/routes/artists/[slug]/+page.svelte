@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	// Assuming you're using this for consistency
@@ -89,25 +90,10 @@
 					</section>
 
 					<div class="mt-16 border-t border-stone-100 pt-16">
-						<a
+						<Button
 							href={`/shop?artist=${encodeURIComponent(artist.firstName + ' ' + artist.lastName)}`}
-							class="group relative inline-flex items-center gap-8 overflow-hidden border border-stone-900 px-12 py-5 transition-all"
-						>
-							<span
-								class="relative z-10 text-xs font-bold tracking-[0.3em] uppercase transition-colors duration-300 group-hover:text-white"
-							>
-								View Available Works
-							</span>
-
-							<Icon
-								icon="ph:arrow-right-light"
-								class="relative z-10 text-xl transition-colors duration-300 group-hover:text-white"
-							/>
-
-							<div
-								class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0"
-							></div>
-						</a>
+							label="View Available Works"
+						/>
 					</div>
 				</div>
 			</div>

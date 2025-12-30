@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button.svelte';
 </script>
 
 <section class="min-h-screen bg-white font-serif text-stone-900">
@@ -52,18 +53,7 @@
 			</div>
 
 			<div class="mt-12">
-				<a
-					href="/shop"
-					class="group relative inline-flex items-center gap-6 overflow-hidden border border-stone-900 px-10 py-4 transition-all"
-				>
-					<span
-						class="relative z-10 text-[10px] font-bold tracking-[0.3em] uppercase transition-colors duration-300 group-hover:text-white"
-						>Explore the Collection</span
-					>
-					<div
-						class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0"
-					></div>
-				</a>
+				<Button label="Explore the Collection" href="/shop" />
 			</div>
 		</div>
 	</div>

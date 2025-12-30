@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import Button from '$lib/components/ui/button.svelte';
 	import Icon from '@iconify/svelte';
 
 	// In a real app, you'd fetch this based on page.params.id
@@ -142,20 +143,11 @@
 
 	<footer class="border-t border-stone-100 bg-stone-50/30 py-24 text-center">
 		<div class="mb-20">
-			<a
-				href="/shop?collection={collectionId}"
-				class="group relative inline-block overflow-hidden border border-stone-900 px-10 py-4"
-			>
-				<div
-					class="absolute inset-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0"
-				></div>
-
-				<span
-					class="relative z-10 text-[10px] font-bold tracking-[0.4em] text-stone-900 uppercase transition-colors duration-300 group-hover:text-white"
-				>
-					Shop the {collectionData.title} Collection
-				</span>
-			</a>
+			<Button
+				href={`/shop?collection=${collectionId}`}
+				label={`Shop the ${collectionData.title} Collection`}
+				size="lg"
+			/>
 		</div>
 	</footer>
 </section>

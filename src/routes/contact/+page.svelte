@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button.svelte';
 	import Icon from '@iconify/svelte';
 
 	let formData = $state({
@@ -56,11 +57,13 @@
 							bind:value={formData.name}
 							required
 							placeholder=" "
-							class="peer w-full border-b border-stone-200 bg-transparent py-2 font-sans focus:border-stone-900 focus:outline-none"
+							class="peer w-full border-b border-stone-300 bg-transparent py-2 font-sans text-stone-950 focus:border-stone-900 focus:outline-none"
 						/>
 						<label
 							for="name"
-							class="absolute top-2 left-0 -z-10 text-xs tracking-widest text-stone-400 uppercase transition-all peer-focus:-top-4 peer-focus:text-stone-900 peer-[:not(:placeholder-shown)]:-top-4"
+							class="pointer-events-none absolute top-2 left-0 text-xs tracking-widest text-stone-500 uppercase transition-all
+                peer-focus:-top-4 peer-focus:text-stone-950
+                peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-stone-950"
 						>
 							Full Name
 						</label>
@@ -73,11 +76,13 @@
 							bind:value={formData.email}
 							required
 							placeholder=" "
-							class="peer w-full border-b border-stone-200 bg-transparent py-2 font-sans focus:border-stone-900 focus:outline-none"
+							class="peer w-full border-b border-stone-300 bg-transparent py-2 font-sans text-stone-950 focus:border-stone-900 focus:outline-none"
 						/>
 						<label
 							for="email"
-							class="absolute top-2 left-0 -z-10 text-xs tracking-widest text-stone-400 uppercase transition-all peer-focus:-top-4 peer-focus:text-stone-900 peer-[:not(:placeholder-shown)]:-top-4"
+							class="pointer-events-none absolute top-2 left-0 text-xs tracking-widest text-stone-500 uppercase transition-all
+                peer-focus:-top-4 peer-focus:text-stone-950
+                peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-stone-950"
 						>
 							Email Address
 						</label>
@@ -88,8 +93,9 @@
 					<select
 						id="subject"
 						bind:value={formData.subject}
-						class="peer w-full appearance-none border-b border-stone-200 bg-transparent py-2 font-sans focus:border-stone-900 focus:outline-none"
+						class="peer w-full appearance-none border-b border-stone-300 bg-transparent py-2 font-sans text-stone-950 focus:border-stone-900 focus:outline-none"
 					>
+						<option value="" disabled selected>Select an option</option>
 						<option>General Inquiry</option>
 						<option>Acquisition Request</option>
 						<option>Artist Representation</option>
@@ -97,7 +103,7 @@
 					</select>
 					<label
 						for="subject"
-						class="absolute -top-4 left-0 text-xs tracking-widest text-stone-900 uppercase"
+						class="absolute -top-4 left-0 text-xs font-bold tracking-widest text-stone-950 uppercase"
 					>
 						Inquiry Type
 					</label>
@@ -110,30 +116,20 @@
 						required
 						placeholder=" "
 						rows="4"
-						class="peer w-full resize-none border-b border-stone-200 bg-transparent py-2 font-sans focus:border-stone-900 focus:outline-none"
+						class="peer w-full resize-none border-b border-stone-300 bg-transparent py-2 font-sans text-stone-950 focus:border-stone-900 focus:outline-none"
 					></textarea>
 					<label
 						for="message"
-						class="absolute top-2 left-0 -z-10 text-xs tracking-widest text-stone-400 uppercase transition-all peer-focus:-top-4 peer-focus:text-stone-900 peer-[:not(:placeholder-shown)]:-top-4"
+						class="pointer-events-none absolute top-2 left-0 text-xs tracking-widest text-stone-500 uppercase transition-all
+            peer-focus:-top-4 peer-focus:text-stone-950
+            peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-stone-950"
 					>
 						Your Message
 					</label>
 				</div>
 
 				<div class="flex items-center gap-8">
-					<button
-						type="submit"
-						class="group relative overflow-hidden border border-stone-900 px-12 py-4 transition-all"
-					>
-						<span
-							class="relative z-10 text-xs font-bold tracking-[0.4em] uppercase transition-colors duration-300 group-hover:text-white"
-						>
-							{status || 'Send Message'}
-						</span>
-						<div
-							class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0"
-						></div>
-					</button>
+					<Button label={status || 'Send Message'} size="lg" />
 				</div>
 			</form>
 		</div>
