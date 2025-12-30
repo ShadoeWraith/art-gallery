@@ -55,9 +55,6 @@
 					<div class="mt-6 border-t border-stone-300 pt-6">
 						<h2 class="text-3xl font-light">{artist.firstName}</h2>
 						<h2 class="mb-4 text-3xl font-bold">{artist.lastName}</h2>
-						<p class="text-sm tracking-tighter text-stone-500 uppercase">
-							Contemporary Artist • Uganda
-						</p>
 					</div>
 				</div>
 
