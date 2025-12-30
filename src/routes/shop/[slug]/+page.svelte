@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
-	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
 	const { data } = $props();
 
@@ -110,166 +110,143 @@
 	};
 </script>
 
-<section>
-	<div
-		class="col-span-12 grid border-r-2 border-stone-400 md:col-span-10 md:grid-cols-2 lg:grid-cols-4"
-	>
+<section class="min-h-screen bg-white font-serif text-stone-900">
+	<div class="flex h-12 w-full items-center border-b border-stone-200 px-6">
+		<button
+			onclick={goBack}
+			class="flex items-center gap-2 text-[10px] tracking-[0.2em] text-stone-400 uppercase transition-colors hover:text-stone-900"
+		>
+			<Icon icon="ph:arrow-left-light" class="text-lg" />
+			Back to Collection
+		</button>
+	</div>
+
+	<div class="grid grid-cols-12">
 		{#if loading}
-			<div
-				class="col-span-12 grid border-r-2 border-stone-400 md:col-span-10 md:grid-cols-2 lg:grid-cols-4"
-			>
+			<div class="col-span-12 grid lg:grid-cols-2">
 				<div
-					class="col-span-2 w-full border-r-2 border-b-2 border-stone-400 bg-stone-300 py-16 md:py-32"
+					class="flex items-center justify-center border-stone-200 bg-stone-50 py-20 lg:border-r"
 				>
-					<div class="m-auto border-stone-400">
-						<Skeleton
-							class="borderimg m-auto h-96 max-h-[30rem] max-w-[42rem] bg-gray-500 shadow-2xl shadow-stone-500 max-sm:max-h-72 max-sm:max-w-80 lg:w-80"
-						/>
-					</div>
+					<Skeleton class="h-64 w-48 bg-stone-200" />
 				</div>
-
-				<div class="col-span-2 w-full border-b-2 border-stone-400 pt-4 sm:text-2xl">
-					<div class="md:mx-24">
-						<div class="mb-12 border-b-2 border-stone-400 px-4 pb-4">
-							<Skeleton class="mb-2 h-8 w-1/2 bg-gray-400" />
-							<Skeleton class="h-6 w-2/3 bg-gray-400" />
-						</div>
-
-						<div class="mb-12 flex w-full flex-col gap-4 border-b-2 border-stone-400 pb-4">
-							<div class="flex flex-col gap-2 px-4">
-								<h3 class="text-xl">Frame Selection:</h3>
-								<h4 class="text-lg font-bold">
-									{selectedFrame !== null ? selectedFrame.name : 'None'}
-								</h4>
-							</div>
-							<div class="mx-4 flex flex-wrap gap-4 md:m-0 md:justify-normal">
-								<button
-									class={`h-20 w-20 cursor-pointer rounded-sm border-2 border-stone-400 hover:bg-stone-300 ${selectedFrame === null ? 'bg-stone-300 outline-2 outline-indigo-500' : ''}`}
-								>
-									<Icon icon="radix-icons:value-none" class="m-auto text-4xl"></Icon>
-								</button>
-								{#each Array(4) as _}
-									<Skeleton class="h-20 w-20 border-2 border-stone-400 bg-gray-400" />
-								{/each}
-							</div>
-						</div>
-
-						<div class="px-4 pb-4">
-							<h3 class="text-xl">Description:</h3>
-							<div class="space-y-2">
-								<Skeleton class="h-4 w-full bg-gray-400" />
-								<Skeleton class="h-4 w-5/6 bg-gray-400" />
-								<Skeleton class="h-4 w-2/3 bg-gray-400" />
-							</div>
-						</div>
-					</div>
+				<div class="p-12">
+					<Skeleton class="mb-4 h-10 w-3/4 bg-stone-200" />
+					<Skeleton class="h-6 w-1/4 bg-stone-200" />
 				</div>
 			</div>
 		{:else}
 			<div
-				class="col-span-2 w-full border-r-2 border-b-2 border-stone-400 bg-stone-300 pt-14 md:pt-16"
-				class:py-16={!artwork.subImageUrls}
+				class="col-span-12 flex flex-col border-b border-stone-200 bg-stone-50 lg:col-span-7 lg:border-r lg:border-b-0"
 			>
-				<div class="m-auto border-stone-400">
+				<div class="flex items-center justify-center px-8 py-16 md:px-20 md:py-24">
 					<img
 						src={`https://artgallery-images.s3.us-west-1.amazonaws.com/artwork/${selectedImage}`}
 						alt={artwork.title}
-						class="borderimg m-auto max-h-[30rem] max-w-[42rem] shadow-2xl shadow-stone-500 max-sm:max-h-72 max-sm:max-w-80 lg:w-auto"
+						class="borderimg max-h-[55vh] w-auto shadow-2xl transition-all duration-500"
 						style={selectedFrame && artwork.imageUrl === selectedImage
 							? `border-image-source: url('${selectedFrame.imageUrl}')`
 							: ''}
 					/>
 				</div>
+
 				{#if artwork.subImageUrls && artwork.subImageUrls.length > 0}
-					<div
-						class="mt-16 grid grid-cols-4 place-items-center border-t border-stone-400 px-16 py-6"
-					>
+					<div class="mt-auto flex justify-center gap-3 border-t border-stone-200 bg-white p-4">
 						<button
 							onclick={() => handleSelectedArtwork(artwork.imageUrl)}
-							class="flex h-30 w-30 cursor-pointer rounded border-2 duration-200 hover:border-indigo-500 hover:bg-stone-100"
-							class:border-indigo-500={artwork.imageUrl === selectedImage}
-							class:bg-stone-100={artwork.imageUrl === selectedImage}
-							class:border-stone-400={artwork.imageUrl !== selectedImage}
-							class:bg-stone-200={artwork.imageUrl !== selectedImage}
+							class="h-16 w-16 border transition-all"
+							class:border-stone-900={artwork.imageUrl === selectedImage}
+							class:border-stone-100={artwork.imageUrl !== selectedImage}
 						>
 							<img
 								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${artwork.imageUrl}`}
-								alt={artwork.title}
-								class="borderimg m-auto max-h-28 max-w-28"
+								alt="Main"
+								class="h-full w-full object-cover"
 							/>
 						</button>
 						{#each artwork.subImageUrls as subImage}
 							<button
 								onclick={() => handleSelectedArtwork(subImage)}
-								class="flex h-30 w-30 cursor-pointer rounded border-2 duration-200 hover:border-indigo-500 hover:bg-stone-100"
-								class:border-indigo-500={subImage === selectedImage}
-								class:bg-stone-100={subImage === selectedImage}
-								class:border-stone-400={subImage !== selectedImage}
-								class:bg-stone-200={subImage !== selectedImage}
+								class="h-16 w-16 border transition-all"
+								class:border-stone-900={subImage === selectedImage}
+								class:border-stone-100={subImage !== selectedImage}
 							>
 								<img
 									src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${subImage}`}
-									alt={artwork.title}
-									class="borderimg m-auto max-h-28 max-w-28"
+									alt="Detail"
+									class="h-full w-full object-cover"
 								/>
 							</button>
 						{/each}
 					</div>
 				{/if}
 			</div>
-			<div class="col-span-2 w-full border-b-2 border-stone-400 py-2 sm:text-2xl">
-				<button
-					onclick={goBack}
-					class="mx-2 flex cursor-pointer text-base duration-200 hover:text-indigo-700"
-				>
-					<Icon icon="radix-icons:arrow-left" class="m-auto text-2xl"></Icon>
-					Go Back
-				</button>
-				<div class="py-8 md:mx-24">
-					<div class="mb-12 border-b-2 border-stone-400 px-4 pb-4">
-						<h2 class="text-3xl">{artwork.title}</h2>
-						<h3 class="text-xl">By: {artwork.artist}</h3>
+
+			<div class="col-span-12 flex flex-col p-8 md:p-12 lg:col-span-5 lg:p-16">
+				<header class="mb-10 border-b border-stone-100 pb-10">
+					<p class="mb-2 text-[10px] tracking-[0.3em] text-stone-400 uppercase">Original Artwork</p>
+					<h2 class="mb-3 text-3xl font-medium tracking-tight md:text-4xl">{artwork.title}</h2>
+					<h3 class="font-serif text-lg text-stone-600 italic">{artwork.artist}</h3>
+				</header>
+
+				<div class="mb-10">
+					<div class="mb-4 flex items-baseline justify-between">
+						<h4 class="text-[11px] font-bold tracking-widest text-stone-900 uppercase">
+							Frame Selection
+						</h4>
+						<span class="font-serif text-xs text-stone-500 italic">
+							{selectedFrame !== null ? selectedFrame.name : 'Unframed'}
+						</span>
 					</div>
 
-					<div class="mb-12 flex w-full flex-col gap-4 border-b-2 border-stone-400 pb-4">
-						<div class="flex flex-col gap-2 px-4">
-							<h3 class="text-xl">Frame Selection:</h3>
-							<h4 class="text-lg font-bold">
-								{selectedFrame !== null ? selectedFrame.name : 'None'}
-							</h4>
-						</div>
-						<div class="mx-4 flex flex-wrap gap-4 md:justify-normal">
+					<div class="flex flex-wrap gap-2">
+						<button
+							onclick={() => handleFrameSelection('none')}
+							class="flex h-14 w-14 items-center justify-center border transition-all"
+							class:border-stone-900={selectedFrame === null}
+							class:border-stone-100={selectedFrame !== null}
+						>
+							<Icon icon="ph:prohibit-light" class="text-xl text-stone-300" />
+						</button>
+
+						{#each availableFrames as frame}
 							<button
-								onclick={() => {
-									handleFrameSelection('none');
-								}}
-								class={`h-20 w-20 cursor-pointer rounded-sm border-2 border-stone-400 hover:bg-stone-300 ${selectedFrame === null ? 'bg-stone-300 outline-2 outline-indigo-500' : ''}`}
+								onclick={() => handleFrameSelection(frame)}
+								class="h-14 w-14 border p-0.5 transition-all"
+								class:border-stone-900={frame.id === selectedFrame?.id}
+								class:border-stone-100={frame.id !== selectedFrame?.id}
 							>
-								<Icon icon="radix-icons:value-none" class="m-auto text-4xl"></Icon>
+								<img src={frame.imageUrl} alt={frame.name} class="h-full w-full object-cover" />
 							</button>
-
-							{#each availableFrames as frame}
-								<button
-									onclick={() => {
-										handleFrameSelection(frame);
-									}}
-									class={`h-20 w-20 cursor-pointer rounded-sm border-2 border-stone-400 p-4 hover:bg-stone-300 ${frame.id === selectedFrame?.id ? 'bg-stone-300 outline-2 outline-indigo-500' : ''}`}
-								>
-									<img src={frame.imageUrl} alt={frame.description} class="object-contain" />
-								</button>
-							{/each}
-						</div>
-					</div>
-
-					<div class="px-4">
-						<h3 class="text-xl">Description:</h3>
-						<p class="text-lg">{artwork.description}</p>
+						{/each}
 					</div>
 				</div>
+
+				<div class="mb-10">
+					<h4 class="mb-3 text-[11px] font-bold tracking-widest text-stone-900 uppercase">
+						Description
+					</h4>
+					<p class="font-sans text-base leading-relaxed text-stone-600">
+						{artwork.description}
+					</p>
+				</div>
+
+				<button
+					class="group relative w-full overflow-hidden border border-stone-900 bg-stone-900 py-4 text-white transition-all"
+				>
+					<span class="relative z-10 text-[10px] font-bold tracking-[0.4em] uppercase"
+						>Inquire for Purchase</span
+					>
+					<div
+						class="absolute inset-0 z-0 translate-y-full bg-white transition-transform duration-300 group-hover:translate-y-0"
+					></div>
+					<span
+						class="absolute inset-0 z-10 flex items-center justify-center text-[10px] font-bold tracking-[0.4em] text-stone-900 uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+						>Contact Gallery</span
+					>
+				</button>
 			</div>
 		{/if}
 	</div>
-	<div class="h-12 w-full"></div>
 </section>
 
 <style>

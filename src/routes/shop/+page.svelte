@@ -1,38 +1,64 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
 	const { data } = $props();
 	let queryParams = data.queryParams;
 	let artwork: any = $state([]);
+	let artists: any = $state([]);
+	let loadingArtists: boolean = $state(true);
 	let startKey: any = $state('');
 	let loading: boolean = $state(true);
 	let loadMoreDisabled: boolean = $state(false);
+	let isMobileMenuOpen = $state(false);
 
 	onMount(async () => {
 		const fullUrl = `/api/proxy/images${queryParams ? `${queryParams}` : ''}`;
 		const cached = loadFromLocalStorage('artworkData');
 
-		if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== '/api/proxy/images') {
-			artwork = cached.items;
-			startKey = cached.startKey;
-			loading = false;
-		} else {
-			const res = await fetch(fullUrl);
-			const json = await res.json();
+		// --- Fetch Artists (Fresh every time) ---
+		const fetchArtists = async () => {
+			try {
+				const res = await fetch('/api/proxy/artist');
+				if (res.ok) {
+					artists = await res.json();
+				}
+			} catch (e) {
+				console.error('Failed to fetch artists', e);
+			} finally {
+				loadingArtists = false;
+			}
+		};
 
-			artwork = json.Items;
-			startKey = json.nextStartKey;
-			loading = false;
+		// --- Fetch Artwork (Your existing logic) ---
+		const fetchArtwork = async () => {
+			if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== '/api/proxy/images') {
+				artwork = cached.items;
+				startKey = cached.startKey;
+				loading = false;
+			} else {
+				const res = await fetch(fullUrl);
+				const json = await res.json();
 
-			saveToLocalStorage('artworkData', {
-				items: json.Items,
-				startKey: json.nextStartKey,
-				fullUrl
-			});
-		}
+				artwork = json.Items;
+				startKey = json.nextStartKey;
+				loading = false;
+
+				saveToLocalStorage('artworkData', {
+					items: json.Items,
+					startKey: json.nextStartKey,
+					fullUrl
+				});
+			}
+		};
+
+		// Trigger both
+		fetchArtists();
+		fetchArtwork();
 	});
 
 	let colors = $state([
@@ -47,8 +73,6 @@
 		{ label: 'Black', color: 'bg-black' }
 	]);
 	let orientation = $state(['Horizontal', 'Vertical']);
-	let sizes = $state(['None for now']);
-	let artists = $state(['First Last', 'Artist Name', 'Shaun']);
 
 	let showFilters: boolean = $state(false);
 
@@ -181,215 +205,349 @@
 	};
 </script>
 
-<section>
-	<!-- Header -->
-	<div class="flex h-16 w-full items-center border-b-2 border-stone-400">
-		<h1 class="w-full text-center text-4xl">Shop</h1>
+<section class="min-h-screen bg-white font-serif text-stone-900">
+	<div class="flex h-24 w-full items-center border-b border-stone-200 px-8">
+		<h1 class="text-xs tracking-[0.4em] text-stone-400 uppercase">
+			Collection / <span class="text-stone-900">Shop All</span>
+		</h1>
 	</div>
 
-	<!-- Mobile Filter Toggle -->
-	<div class="flex justify-end border-b-2 border-stone-400 p-4 lg:hidden">
-		<button onclick={() => (showFilters = !showFilters)} class="text-lg font-semibold">
-			{showFilters ? 'Hide Filters' : 'Show Filters'}
+	<div
+		class="flex items-center justify-between border-b border-stone-200 bg-stone-50 p-4 lg:hidden"
+	>
+		<span class="text-sm tracking-widest text-stone-500 uppercase">Filter Artworks</span>
+		<button
+			onclick={() => (showFilters = !showFilters)}
+			class="text-sm font-bold tracking-tighter uppercase underline underline-offset-4"
+		>
+			{showFilters ? 'Close' : 'Filter'}
 		</button>
 	</div>
 
-	<!-- Grid Layout -->
 	<div class="grid grid-cols-12">
-		<!-- Filters Sidebar -->
-		<div
-			class={`col-span-12 ${showFilters ? 'flex' : 'hidden'} flex-col border-r-2 border-b-2 border-stone-400 [box-shadow:4px_0_6px_-2px_rgba(0,0,0,0.1)] lg:col-span-2 lg:flex`}
+		{#if isMobileMenuOpen}
+			<div
+				role="presentation"
+				onclick={() => (isMobileMenuOpen = false)}
+				class="fixed inset-0 z-[60] bg-stone-900/40 backdrop-blur-sm transition-all duration-500 lg:hidden"
+			></div>
+		{/if}
+
+		<aside
+			class="
+        /* DESKTOP SIDEBAR */
+        /* MOBILE BOTTOM SHEET */ fixed inset-x-0 bottom-0 z-[70] flex flex-col rounded-t-3xl
+        
+        border-t border-stone-200 bg-white transition-transform duration-500
+        ease-[cubic-bezier(0.32,0.72,0,1)] lg:visible lg:sticky lg:top-20 lg:z-10 lg:col-span-2 lg:flex lg:h-[calc(100vh-5rem)] lg:translate-y-0 lg:flex-col lg:border-r lg:bg-white lg:opacity-100
+        {isMobileMenuOpen ? 'translate-y-0' : 'translate-y-full'}
+        lg:rounded-none lg:border-t-0
+    "
 		>
-			<div class="flex w-full items-center border-b-2 border-stone-400 px-4 py-2">
-				<h4 class="text-lg font-semibold">Filters</h4>
-				<div class="ml-auto flex items-center gap-1">
+			<div class="flex w-full items-center justify-center py-4 lg:hidden">
+				<div class="h-1.5 w-12 rounded-full bg-stone-200"></div>
+			</div>
+
+			<div class="flex w-full items-center border-b border-stone-100 px-8 py-5">
+				<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">Refine By</h4>
+				{#if page.url.searchParams.size > 0}
 					<button
 						onclick={clearFilters}
-						class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-red-600"
+						class="ml-auto text-[10px] font-bold tracking-widest text-red-700 uppercase underline underline-offset-4"
 					>
-						Clear Filters
+						Clear All
 					</button>
+				{/if}
+			</div>
+
+			<div class="flex h-full flex-col bg-white lg:sticky lg:top-24 lg:h-[calc(100vh-120px)]">
+				<div class="custom-scrollbar flex-1 overflow-y-auto overscroll-contain px-2 pb-32">
+					<Collapsible.Root open>
+						<Collapsible.Trigger
+							class="group w-full border-b border-stone-100 px-6 py-5 transition-colors hover:bg-stone-50"
+						>
+							<div class="flex w-full items-center">
+								<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
+									Orientation
+								</h4>
+								<div class="ml-auto flex items-center gap-4">
+									{#if page.url.searchParams.get('orientation')}
+										<button
+											onclick={(e) => {
+												e.stopPropagation();
+												resetFilter('orientation');
+											}}
+											class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
+										>
+											Reset
+										</button>
+									{/if}
+									<span
+										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
+									>
+										+
+									</span>
+								</div>
+							</div>
+						</Collapsible.Trigger>
+
+						<Collapsible.Content
+							class="data-[state=closed]:animate-collapse data-[state=open]:animate-expand overflow-hidden transition-all"
+						>
+							<div class="flex flex-col space-y-0.5 py-2">
+								{#each orientation as o}
+									<button
+										onclick={() => handleFilters('tags', o)}
+										class="flex w-full items-center gap-4 px-6 py-3 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
+										class:bg-stone-50={page.url.searchParams.get('tags') === o}
+									>
+										<div
+											class="flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-stone-200 bg-white"
+										>
+											<div
+												class="h-1.5 w-1.5 bg-stone-900 transition-all duration-300"
+												class:scale-100={page.url.searchParams.get('tags') === o}
+												class:scale-0={page.url.searchParams.get('tags') !== o}
+											></div>
+										</div>
+										<span
+											class={page.url.searchParams.get('tags') === o
+												? 'font-bold text-stone-900'
+												: 'text-stone-500'}>{o}</span
+										>
+									</button>
+								{/each}
+							</div>
+						</Collapsible.Content>
+					</Collapsible.Root>
+
+					<Collapsible.Root open>
+						<Collapsible.Trigger
+							class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
+						>
+							<div class="flex w-full items-center">
+								<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
+									Color
+								</h4>
+								<div class="ml-auto flex items-center gap-4">
+									{#if page.url.searchParams.get('tags')}
+										<button
+											onclick={(e) => {
+												e.stopPropagation();
+												resetFilter('tags');
+											}}
+											class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
+										>
+											Reset
+										</button>
+									{/if}
+									<span
+										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
+										>+</span
+									>
+								</div>
+							</div>
+						</Collapsible.Trigger>
+						<Collapsible.Content class="overflow-hidden">
+							<div class="grid grid-cols-1 py-2">
+								{#each colors as color}
+									<button
+										onclick={() => handleFilters('tags', color.label)}
+										class="flex w-full items-center gap-4 px-6 py-3 text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
+										class:bg-stone-50={page.url.searchParams.get('tags')?.includes(color.label)}
+									>
+										<div
+											class={`h-2.5 w-2.5 shrink-0 rounded-full ring-1 ring-transparent ring-offset-2 transition-all ${color.color} ${page.url.searchParams.get('tags')?.includes(color.label) ? 'ring-stone-400' : ''}`}
+										></div>
+										<span
+											class={page.url.searchParams.get('tags')?.includes(color.label)
+												? 'font-bold text-stone-900'
+												: 'text-stone-500'}>{color.label}</span
+										>
+									</button>
+								{/each}
+							</div>
+						</Collapsible.Content>
+					</Collapsible.Root>
+
+					<Collapsible.Root open>
+						<Collapsible.Trigger
+							class="group w-full border-b border-stone-100 px-6 py-5 hover:bg-stone-50"
+						>
+							<div class="flex w-full items-center">
+								<h4 class="text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase">
+									Artist
+								</h4>
+								<div class="ml-auto flex items-center gap-4">
+									{#if page.url.searchParams.get('artist')}
+										<button
+											onclick={(e) => {
+												e.stopPropagation();
+												resetFilter('artist');
+											}}
+											class="text-[9px] font-bold tracking-widest text-stone-400 uppercase underline underline-offset-4 hover:text-stone-900"
+										>
+											Reset
+										</button>
+									{/if}
+									<span
+										class="text-lg font-light text-stone-300 transition-transform duration-300 group-data-[state=open]:rotate-45"
+										>+</span
+									>
+								</div>
+							</div>
+						</Collapsible.Trigger>
+						<Collapsible.Content class="overflow-hidden">
+							<div class="flex flex-col py-2">
+								{#each artists as artist}
+									{@const fullName = `${artist.firstName} ${artist.lastName}`}
+									<button
+										onclick={() => handleFilters('artist', fullName)}
+										class="w-full px-6 py-3 text-left text-[9px] tracking-[0.15em] uppercase transition-all hover:bg-stone-50"
+										class:text-stone-900={page.url.searchParams.get('artist') === fullName}
+										class:font-bold={page.url.searchParams.get('artist') === fullName}
+										class:text-stone-500={page.url.searchParams.get('artist') !== fullName}
+									>
+										{fullName}
+									</button>
+								{/each}
+							</div>
+						</Collapsible.Content>
+					</Collapsible.Root>
 				</div>
 			</div>
-			<!-- Color Filter -->
-			<Collapsible.Root open class="">
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
-						<h4 class="text-lg">Color</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('tags', 'color');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each colors as color}
-						<button
-							onclick={() => handleFilters('tags', color.label)}
-							class="flex items-center gap-2 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<div class={`h-5 w-5 rounded border border-stone-400 ${color.color}`}></div>
-							<span>{color.label}</span>
-						</button>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
 
-			<!-- Orientation Filter -->
-			<Collapsible.Root open>
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
-						<h4 class="text-lg">Orientation</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('tags', 'orientation');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each orientation as o}
-						<button
-							onclick={() => handleFilters('tags', o)}
-							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<span>{o}</span>
-						</button>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
+			<style>
+				/* Clean custom scrollbar for better UX */
+				.custom-scrollbar::-webkit-scrollbar {
+					width: 3px;
+				}
+				.custom-scrollbar::-webkit-scrollbar-track {
+					background: transparent;
+				}
+				.custom-scrollbar::-webkit-scrollbar-thumb {
+					background: #e5e7eb; /* stone-200 */
+					border-radius: 10px;
+				}
+				.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+					background: #d6d3d1; /* stone-300 */
+				}
 
-			<!-- Size Filter -->
-			<Collapsible.Root open>
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
-						<h4 class="text-lg">Size</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('tags', 'size');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each sizes as size}
-						<div
-							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<span>{size}</span>
-						</div>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
+				/* Optional: Prevent body scroll when side panel is open on mobile */
+				:global(body:has(.max-h-full)) {
+					overflow: hidden;
+				}
+			</style>
 
-			<!-- Artist Filter -->
-			<Collapsible.Root open>
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4 shadow-lg">
-						<h4 class="text-lg">Artist</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('artist');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each artists as artist}
-						<button
-							onclick={() => handleFilters('artist', artist)}
-							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<span>{artist}</span>
-						</button>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
-		</div>
-
-		<!-- Artwork Grid -->
-		<div
-			class="col-span-12 grid grid-cols-1 border-r-2 border-stone-400 sm:grid-cols-2 md:grid-cols-3 lg:col-span-10 lg:grid-cols-4"
-		>
-			{#if loading}
-				{#each Array(10) as _}
-					<div class="w-full border-r-2 border-b-2 border-stone-400 py-8">
-						<div class="h-80 px-8">
-							<Skeleton class="m-auto h-80 w-full bg-gray-400" />
-						</div>
-						<div class="m-auto w-full px-4 pt-2">
-							<Skeleton class="mb-2 h-6 w-1/2 bg-gray-400" />
-							<Skeleton class="h-8 w-3/4 bg-gray-400" />
-						</div>
-					</div>
-				{/each}
-			{:else if artwork.length === 0}
-				<div
-					class="col-span-4 m-auto w-full py-28 text-center text-3xl md:min-h-[50vh] lg:min-h-screen"
-				>
-					No results found
-				</div>
-			{:else}
-				{#each artwork as art}
-					<a
-						href={`/shop/${art.id}`}
-						onclick={() => handleArtwork(art)}
-						class="max-h-[28rem] w-full cursor-pointer border-r-2 border-b-2 border-stone-400 py-8"
-					>
-						<div class="m-auto mx-4 h-80 rounded bg-stone-300 p-6">
-							<img
-								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
-								alt={`image of ${art.title} by: ${art.artist}`}
-								class="m-auto h-full bg-transparent object-contain"
-							/>
-						</div>
-						<div class="m-auto w-full px-4 pt-2">
-							<h3 class="text-xl font-semibold text-gray-800">{art.title}</h3>
-							<h4 class="w-fit text-xs font-semibold text-gray-600 uppercase">By: {art.artist}</h4>
-						</div>
-					</a>
-				{/each}
-			{/if}
-		</div>
-
-		<!-- Load More Button -->
-		{#if startKey}
-			<div class="col-span-full grid place-content-center border-t border-stone-400 py-4">
+			<div class="fixed bottom-0 left-0 w-full border-t border-stone-100 bg-white p-4 lg:hidden">
 				<button
-					disabled={loadMoreDisabled}
-					onclick={handleLoadMore}
-					class="cursor-pointer rounded-md border-2 border-indigo-500 bg-indigo-700 px-8 py-2 text-xl font-semibold text-gray-200 duration-150 hover:bg-indigo-600 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-400"
+					onclick={() => (isMobileMenuOpen = false)}
+					class="w-full bg-stone-900 py-5 text-[11px] font-bold tracking-[0.3em] text-white uppercase shadow-lg transition-transform active:scale-[0.98]"
 				>
-					Load More
+					Apply & Show Results
 				</button>
 			</div>
-		{:else}
-			<div class="col-span-full grid place-content-center border-t border-stone-400 py-8"></div>
-		{/if}
+		</aside>
+
+		<button
+			onclick={() => (isMobileMenuOpen = true)}
+			class="fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full bg-stone-900 px-10 py-5 text-[10px] font-bold tracking-[0.2em] text-white shadow-2xl transition-all duration-300 active:scale-90 lg:hidden"
+			class:opacity-0={isMobileMenuOpen}
+			class:pointer-events-none={isMobileMenuOpen}
+		>
+			<Icon icon="ph:sliders-horizontal-light" class="text-sm" />
+			FILTERS
+			{#if page.url.searchParams.size > 0}
+				<span
+					class="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[9px] font-bold text-stone-900"
+				>
+					{page.url.searchParams.size}
+				</span>
+			{/if}
+		</button>
+
+		<div class="col-span-12 lg:col-span-10">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				{#if loading}
+					{#each Array(8) as _}
+						<div class="border-b border-stone-100 p-8 sm:border-r">
+							<Skeleton class="h-80 w-full rounded-none bg-stone-100" />
+							<div class="mt-6 space-y-2">
+								<Skeleton class="h-4 w-1/3 bg-stone-100" />
+								<Skeleton class="h-6 w-3/4 bg-stone-100" />
+							</div>
+						</div>
+					{/each}
+				{:else if artwork.length === 0}
+					<div
+						class="col-span-full flex w-full flex-col items-center justify-center py-40 text-center"
+					>
+						<p class="font-serif text-2xl text-stone-400 italic">
+							No pieces match your current criteria.
+						</p>
+						<button
+							onclick={clearFilters}
+							class="mt-6 text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase underline underline-offset-8 transition-colors hover:text-stone-600"
+						>
+							View All Works
+						</button>
+					</div>
+				{:else}
+					{#each artwork as art}
+						<a
+							href={`/shop/${art.id}`}
+							onclick={(e) => {
+								e.preventDefault();
+								handleArtwork(art);
+							}}
+							class="group relative border-b border-stone-100 p-8 transition-colors hover:bg-stone-50 sm:border-r"
+						>
+							<div
+								class="relative flex aspect-[4/5] items-center justify-center overflow-hidden bg-stone-100/50 p-6 transition-all duration-700 group-hover:shadow-2xl"
+							>
+								<img
+									src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
+									alt={art.title}
+									class="h-full w-full object-contain transition-transform duration-1000 group-hover:scale-105"
+								/>
+							</div>
+							<div class="mt-8 text-center sm:text-left">
+								<p class="text-[10px] tracking-[0.2em] text-stone-400 uppercase">Available Work</p>
+								<h3 class="mt-1 text-lg font-medium tracking-tighter text-stone-900 uppercase">
+									{art.title}
+								</h3>
+								<h4 class="mt-1 font-serif text-stone-500 italic">{art.artist}</h4>
+							</div>
+						</a>
+					{/each}
+				{/if}
+			</div>
+
+			{#if startKey}
+				<div class="flex justify-center border-t border-stone-100 py-20">
+					<button
+						disabled={loadMoreDisabled}
+						onclick={handleLoadMore}
+						class="group relative overflow-hidden border border-stone-900 px-12 py-3 transition-colors duration-300 disabled:border-stone-200 disabled:text-stone-300"
+					>
+						<span
+							class="relative z-10 text-xs tracking-[0.3em] uppercase transition-colors duration-300 group-hover:text-white"
+						>
+							{loadMoreDisabled ? 'Loading...' : 'Load More Works'}
+						</span>
+						<div
+							class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0 disabled:hidden"
+						></div>
+					</button>
+				</div>
+			{/if}
+		</div>
 	</div>
 </section>
+
+<style>
+	/* Styling for the Skeleton pulses to be subtler in stone */
+	:global(.skeleton) {
+		background-color: #f5f5f4 !important;
+	}
+</style>

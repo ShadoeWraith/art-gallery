@@ -6,9 +6,8 @@
 
 	let navOptions = [
 		{ label: 'Shop', href: '/shop' },
+		{ label: 'Collections', href: '/collections' }, // Added as a direct button
 		{ label: 'Artists', href: '/artists' },
-		// { label: 'Collections', href: '/collections' },
-		// { label: 'News', href: '/news' },
 		{ label: 'About Us', href: '/about' },
 		{ label: 'Contact', href: '/contact' }
 	];
@@ -22,98 +21,90 @@
 
 	function isActive(href: string): boolean {
 		const currentPath = page.url.pathname;
-
 		if (currentPath === href) return true;
 		if (currentPath.startsWith(href + '/')) return true;
 		return false;
 	}
 </script>
 
-<nav class="relative border-b border-stone-400 bg-[#e6e6e6]">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="flex h-16 justify-between">
-			<!-- Logo -->
+<nav class="sticky top-0 z-50 border-b border-stone-200 bg-white/90 backdrop-blur-md">
+	<div class="mx-auto max-w-7xl px-6 lg:px-12">
+		<div class="flex h-20 items-center justify-between">
 			<div class="flex flex-shrink-0 items-center">
-				<a href="/" onclick={() => (isOpen = false)} class="text-xl font-bold text-gray-800"
-					><span class="text-indigo-600">Africa Curated</span>
-					<span class="text-gray-400">| Art Gallery</span></a
-				>
+				<a href="/" onclick={() => (isOpen = false)} class="group flex flex-col leading-none">
+					<span class="font-serif text-2xl tracking-tighter text-stone-900">Africa Curated</span>
+					<span
+						class="text-[10px] tracking-[0.4em] text-stone-400 uppercase transition-colors group-hover:text-stone-600"
+						>Art Gallery</span
+					>
+				</a>
 			</div>
 
-			<!-- Desktop Menu -->
-			<div class="hidden items-center space-x-2 lg:flex">
-				{#each navOptions as option}
-					<a
-						href={option.href}
-						class="group relative px-3 py-5 text-gray-600 hover:text-gray-900"
-						class:text-gray-900={isActive(option.href)}
-					>
-						<p class="capitalize">{option.label}</p>
-						<span
-							class="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 rounded-lg bg-indigo-500 duration-200 group-hover:scale-x-100"
-							class:scale-x-100={isActive(option.href)}
-							class:scale-x-0={!isActive(option.href)}
-						></span>
-					</a>
-				{/each}
+			<div class="hidden items-center space-x-8 lg:flex">
+				<div class="flex space-x-8 border-r border-stone-200 pr-8">
+					{#each navOptions as option}
+						<a
+							href={option.href}
+							class="relative text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:text-stone-900"
+							class:text-stone-900={isActive(option.href)}
+							class:text-stone-400={!isActive(option.href)}
+						>
+							{option.label}
+							{#if isActive(option.href)}
+								<span class="absolute -bottom-1 left-0 h-[1px] w-full bg-stone-900"></span>
+							{/if}
+						</a>
+					{/each}
+				</div>
 
-				<div class="flex flex-row gap-3">
+				<div class="flex flex-row gap-5">
 					{#each navSocials as social}
-						<a href={social.href}>
-							<Icon
-								icon={social.icon}
-								font-size="28"
-								class="text-gray-600 duration-100 hover:text-indigo-500"
-							></Icon>
+						<a href={social.href} class="text-stone-400 transition-colors hover:text-stone-900">
+							<Icon icon={social.icon} font-size="20"></Icon>
 						</a>
 					{/each}
 				</div>
 			</div>
 
-			<!-- Mobile Menu Button -->
 			<div class="flex items-center lg:hidden">
 				<button
 					aria-label="mobile-menu-button"
 					onclick={() => (isOpen = !isOpen)}
-					class="text-gray-600 hover:text-gray-900 focus:outline-none"
+					class="text-stone-600 hover:text-stone-900 focus:outline-none"
 				>
-					<svg class="h-6 w-6" fill="none" stroke="#4a5565" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
-						/>
-					</svg>
+					<Icon icon={isOpen ? 'ph:x-light' : 'ph:list-light'} font-size="32" />
 				</button>
 			</div>
 		</div>
 	</div>
 
-	<!-- Mobile Menu -->
 	{#if isOpen}
-		<div
-			class="absolute top-12 z-20 h-fit w-full border-y border-stone-400 bg-[#e6e6e6] px-4 pt-2 pb-3 lg:hidden"
-		>
-			{#each navOptions as option}
-				<a
-					href={option.href}
-					onclick={() => (isOpen = false)}
-					class="block py-2 text-gray-600 hover:text-gray-900">{option.label}</a
-				>
-			{/each}
+		<div class="fixed inset-0 top-20 z-40 h-screen w-full bg-white px-8 pt-12 lg:hidden">
+			<div class="flex flex-col space-y-8">
+				{#each navOptions as option}
+					<a
+						href={option.href}
+						onclick={() => (isOpen = false)}
+						class="border-b border-stone-100 pb-4 font-serif text-4xl text-stone-900 italic"
+					>
+						{option.label}
+					</a>
+				{/each}
+			</div>
 
-			<div class="m-auto flex flex-row gap-10 pt-5">
+			<div class="mt-12 flex flex-row gap-8 border-t border-stone-100 pt-12">
 				{#each navSocials as social}
-					<a href={social.href}>
-						<Icon
-							icon={social.icon}
-							font-size="24"
-							class="text-gray-600 duration-100 hover:text-indigo-500"
-						></Icon>
+					<a href={social.href} class="text-stone-400">
+						<Icon icon={social.icon} font-size="28"></Icon>
 					</a>
 				{/each}
 			</div>
 		</div>
 	{/if}
 </nav>
+
+<style>
+	:global(body.menu-open) {
+		overflow: hidden;
+	}
+</style>

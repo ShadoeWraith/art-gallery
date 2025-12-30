@@ -1,5 +1,7 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	// Assuming you're using this for consistency
 
 	interface Artist {
 		id: string;
@@ -13,7 +15,8 @@
 	let artist = $state<Artist | null>(null);
 
 	onMount(async () => {
-		const navigatedState = history.state?.['sveltekit:states']?.artist;
+		// Corrected state key to match your handleArtist function ('art')
+		const navigatedState = history.state?.['sveltekit:states']?.art;
 
 		if (navigatedState) {
 			artist = navigatedState;
@@ -30,85 +33,114 @@
 	});
 </script>
 
-<div class="min-h-screen bg-stone-50 font-serif text-stone-900">
+<div class="min-h-screen bg-white font-serif text-stone-900">
 	{#if artist}
-		<div class="flex h-16 w-full items-center border-b-2 border-stone-400 bg-white">
-			<h1 class="w-full text-center text-4xl tracking-widest uppercase">Artist Profile</h1>
+		<div class="flex h-12 w-full items-center border-b border-stone-200 bg-white px-6">
+			<a
+				href="/artists"
+				class="flex items-center gap-2 text-[10px] tracking-[0.2em] text-stone-400 uppercase transition-colors hover:text-stone-900"
+			>
+				<Icon icon="ph:arrow-left-light" class="text-lg" />
+				Back to Directory
+			</a>
 		</div>
 
-		<main class="mx-auto max-w-6xl px-6 py-12">
-			<div class="grid grid-cols-1 gap-12 md:grid-cols-12">
-				<div class="md:col-span-4">
-					<div class="aspect-[4/5] w-full overflow-hidden border-2 border-stone-400 bg-stone-200">
+		<main class="mx-auto max-w-7xl px-8 py-16 lg:py-24">
+			<div class="grid grid-cols-1 gap-16 lg:grid-cols-12">
+				<div class="lg:top-24 lg:col-span-5 lg:self-start">
+					<div class="relative aspect-[4/5] w-full overflow-hidden bg-stone-100 shadow-2xl">
 						{#if artist.imageUrl}
 							<img
-								src={artist.imageUrl}
+								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artists/${artist.imageUrl}`}
 								alt={`${artist.firstName} ${artist.lastName}`}
 								class="h-full w-full object-cover"
 							/>
 						{:else}
-							<div class="flex h-full items-center justify-center text-stone-400 italic">
-								No Image Available
+							<div
+								class="flex h-full items-center justify-center text-xs tracking-widest text-stone-300 uppercase"
+							>
+								No Portrait Available
 							</div>
 						{/if}
 					</div>
-					<div class="mt-6 border-t border-stone-300 pt-6">
-						<h2 class="text-3xl font-light">{artist.firstName}</h2>
-						<h2 class="mb-4 text-3xl font-bold">{artist.lastName}</h2>
+
+					<div class="mt-12">
+						<p class="mb-2 text-[10px] tracking-[0.4em] text-stone-400 uppercase">
+							Featured Artist
+						</p>
+						<h1 class="text-5xl font-medium tracking-tighter uppercase md:text-6xl lg:text-7xl">
+							{artist.firstName}
+							<span class="block">{artist.lastName}</span>
+						</h1>
+						<div class="mt-8 h-px w-24 bg-stone-900"></div>
 					</div>
 				</div>
 
-				<div class="md:col-span-8">
+				<div class="lg:col-span-7">
 					<section class="description-container">
-						<h3
-							class="mb-6 text-xs tracking-[0.2em] text-stone-400 uppercase underline underline-offset-8"
-						>
-							Biography
+						<h3 class="mb-10 text-[11px] font-bold tracking-[0.3em] text-stone-900 uppercase">
+							Biography & Artistic Vision
 						</h3>
-						<div class="text-justify text-xl leading-relaxed text-stone-800">
+						<div
+							class="font-sans text-lg leading-relaxed text-stone-600 lg:text-xl lg:leading-loose"
+						>
 							{@html artist.description}
 						</div>
 					</section>
+
+					<div class="mt-16 border-t border-stone-100 pt-16">
+						<a
+							href={`/shop?artist=${encodeURIComponent(artist.firstName + ' ' + artist.lastName)}`}
+							class="group relative inline-flex items-center gap-8 overflow-hidden border border-stone-900 px-12 py-5 transition-all"
+						>
+							<span
+								class="relative z-10 text-xs font-bold tracking-[0.3em] uppercase transition-colors duration-300 group-hover:text-white"
+							>
+								View Available Works
+							</span>
+
+							<Icon
+								icon="ph:arrow-right-light"
+								class="relative z-10 text-xl transition-colors duration-300 group-hover:text-white"
+							/>
+
+							<div
+								class="absolute inset-0 z-0 translate-y-full bg-stone-900 transition-transform duration-300 ease-out group-hover:translate-y-0"
+							></div>
+						</a>
+					</div>
 				</div>
 			</div>
 
-			<section class="mt-16 border-t-2 border-stone-400 pt-12">
-				<div class="mb-8 flex flex-col items-center justify-between md:flex-row">
-					<h3 class="text-3xl italic">Artwork</h3>
-					<a
-						href={`/shop?artist=${encodeURIComponent(artist.firstName + ' ' + artist.lastName)}`}
-						class="mt-4 border-b border-stone-900 pb-1 text-sm tracking-widest uppercase transition-all hover:border-stone-500 hover:text-stone-500 md:mt-0"
-					>
-						Shop
-					</a>
+			<section class="mt-32 border-t border-stone-200 pt-20">
+				<div class="mb-12 flex items-baseline justify-between">
+					<h3 class="text-2xl font-medium tracking-tight uppercase">Featured Portfolio</h3>
+					<p class="text-xs tracking-widest text-stone-400 uppercase">Curated Selection</p>
 				</div>
 
-				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-					<div
-						class="flex aspect-square items-center justify-center border border-stone-300 bg-stone-200 text-xs text-stone-400 italic"
-					>
-						Artwork I
-					</div>
-					<div
-						class="flex aspect-square items-center justify-center border border-stone-300 bg-stone-200 text-xs text-stone-400 italic"
-					>
-						Artwork II
-					</div>
-					<div
-						class="flex aspect-square items-center justify-center border border-stone-300 bg-stone-200 text-xs text-stone-400 italic"
-					>
-						Artwork III
-					</div>
+				<div class="grid grid-cols-1 gap-1 border-t border-l border-stone-100 sm:grid-cols-3">
+					{#each Array(3) as _, i}
+						<div
+							class="group flex aspect-square cursor-pointer flex-col items-center justify-center overflow-hidden border-r border-b border-stone-100 bg-stone-50"
+						>
+							<div
+								class="text-[10px] tracking-[0.3em] text-stone-300 uppercase transition-colors group-hover:text-stone-900"
+							>
+								Exhibition Piece {i + 1}
+							</div>
+							<div
+								class="mt-4 h-px w-0 bg-stone-900 transition-all duration-500 group-hover:w-12"
+							></div>
+						</div>
+					{/each}
 				</div>
 			</section>
 		</main>
 	{:else}
-		<div class="flex h-screen items-center justify-center">
-			<div class="text-center">
-				<div
-					class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-stone-300 border-t-stone-900"
-				></div>
-				<p class="animate-pulse font-sans text-stone-400">Loading artist profile...</p>
+		<div class="flex h-screen items-center justify-center bg-white">
+			<div class="flex flex-col items-center">
+				<div class="h-12 w-px animate-bounce bg-stone-200"></div>
+				<p class="mt-4 text-[10px] tracking-[0.5em] text-stone-400 uppercase">Loading Artist</p>
 			</div>
 		</div>
 	{/if}
@@ -116,12 +148,20 @@
 
 <style>
 	:global(.description-container p) {
-		margin-bottom: 1.8rem;
+		margin-bottom: 2rem;
 	}
 	:global(.description-container h2) {
-		font-size: 1.75rem;
-		margin-top: 2rem;
-		margin-bottom: 1rem;
-		font-weight: 600;
+		font-family: ui-serif, Georgia, serif;
+		font-size: 2rem;
+		margin-top: 3rem;
+		margin-bottom: 1.5rem;
+		font-weight: 400;
+		color: #1c1917; /* stone-900 */
+		letter-spacing: -0.025em;
+	}
+	/* Custom Scrollbar for the sticky sidebar */
+	main {
+		scrollbar-width: thin;
+		scrollbar-color: #e7e5e4 transparent;
 	}
 </style>
