@@ -181,3 +181,25 @@
 :global(strong) {
     @apply font-bold text-foreground;
 }
+
+/* Width of the scrollbar */
+::-webkit-scrollbar {
+  width: 5px;  /* Makes it thin */
+  height: 5px; /* For horizontal scrollbars */
+}
+
+/* Track (the background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+/* Handle (the part you drag) */
+::-webkit-scrollbar-thumb {
+  background: #373d46; /* A medium grey (Tailwind gray-600) */
+  border-radius: 10px;  /* Makes it rounded */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #575c66; /* A slightly lighter grey on hover */
+}
