@@ -1,38 +1,65 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
+	import { page } from '$app/state';
+	import Button from '$lib/components/ui/button.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import Filter from './Filter.svelte';
 
 	const { data } = $props();
 	let queryParams = data.queryParams;
 	let artwork: any = $state([]);
+	let artists: any = $state([]);
+	let loadingArtists: boolean = $state(true);
 	let startKey: any = $state('');
 	let loading: boolean = $state(true);
 	let loadMoreDisabled: boolean = $state(false);
+	let isMobileMenuOpen = $state(false);
 
 	onMount(async () => {
 		const fullUrl = `/api/proxy/images${queryParams ? `${queryParams}` : ''}`;
 		const cached = loadFromLocalStorage('artworkData');
 
-		if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== '/api/proxy/images') {
-			artwork = cached.items;
-			startKey = cached.startKey;
-			loading = false;
-		} else {
-			const res = await fetch(fullUrl);
-			const json = await res.json();
+		// --- Fetch Artists (Fresh every time) ---
+		const fetchArtists = async () => {
+			try {
+				const res = await fetch('/api/proxy/artist');
+				if (res.ok) {
+					artists = await res.json();
+				}
+			} catch (e) {
+				console.error('Failed to fetch artists', e);
+			} finally {
+				loadingArtists = false;
+			}
+		};
 
-			artwork = json.Items;
-			startKey = json.nextStartKey;
-			loading = false;
+		// --- Fetch Artwork (Your existing logic) ---
+		const fetchArtwork = async () => {
+			if (cached && cached.fullUrl === fullUrl && cached.fullUrl !== '/api/proxy/images') {
+				artwork = cached.items;
+				startKey = cached.startKey;
+				loading = false;
+			} else {
+				const res = await fetch(fullUrl);
+				const json = await res.json();
 
-			saveToLocalStorage('artworkData', {
-				items: json.Items,
-				startKey: json.nextStartKey,
-				fullUrl
-			});
-		}
+				artwork = json.Items;
+				startKey = json.nextStartKey;
+				loading = false;
+
+				saveToLocalStorage('artworkData', {
+					items: json.Items,
+					startKey: json.nextStartKey,
+					fullUrl
+				});
+			}
+		};
+
+		// Trigger both
+		fetchArtists();
+		fetchArtwork();
 	});
 
 	let colors = $state([
@@ -46,9 +73,35 @@
 		{ label: 'White', color: 'bg-white' },
 		{ label: 'Black', color: 'bg-black' }
 	]);
-	let orientation = $state(['Horizontal', 'Vertical']);
-	let sizes = $state(['None for now']);
-	let artists = $state(['First Last', 'Artist Name', 'Shaun']);
+	let orientation = $state(['Horizontal', 'Vertical', 'Square']);
+
+	const filterSections = $derived([
+		{
+			title: 'Orientation',
+			key: 'tags',
+			items: orientation, // ['Horizontal', 'Vertical']
+			type: 'list'
+		},
+		{
+			title: 'Color',
+			key: 'tags',
+			items: colors, // Your array of {label, color}
+			type: 'color'
+		},
+		{
+			title: 'Size',
+			key: 'tags',
+			items: ['24x36', '36x48', '48x72', '72x96', '96x144'],
+			type: 'list'
+		},
+		{
+			title: 'Artist',
+			key: 'artist',
+			// Map artist objects to labels or pass as is if component handles it
+			items: artists.map((a: any) => ({ label: `${a.firstName} ${a.lastName}` })),
+			type: 'list'
+		}
+	]);
 
 	let showFilters: boolean = $state(false);
 
@@ -181,215 +234,137 @@
 	};
 </script>
 
-<section>
-	<!-- Header -->
-	<div class="flex h-16 w-full items-center border-b-2 border-stone-400">
-		<h1 class="w-full text-center text-4xl">Shop</h1>
+<section class="min-h-screen bg-white font-serif text-stone-900">
+	<div class="flex h-24 w-full items-center border-b border-stone-200 px-8">
+		<h1 class="text-xs tracking-[0.4em] text-stone-400 uppercase">
+			Collection / <span class="text-stone-900">Shop All</span>
+		</h1>
 	</div>
 
-	<!-- Mobile Filter Toggle -->
-	<div class="flex justify-end border-b-2 border-stone-400 p-4 lg:hidden">
-		<button onclick={() => (showFilters = !showFilters)} class="text-lg font-semibold">
-			{showFilters ? 'Hide Filters' : 'Show Filters'}
-		</button>
-	</div>
-
-	<!-- Grid Layout -->
 	<div class="grid grid-cols-12">
-		<!-- Filters Sidebar -->
-		<div
-			class={`col-span-12 ${showFilters ? 'flex' : 'hidden'} flex-col border-r-2 border-b-2 border-stone-400 [box-shadow:4px_0_6px_-2px_rgba(0,0,0,0.1)] lg:col-span-2 lg:flex`}
+		{#if isMobileMenuOpen}
+			<div
+				role="presentation"
+				onclick={() => (isMobileMenuOpen = false)}
+				class="fixed inset-0 z-[60] bg-stone-900/40 backdrop-blur-sm transition-all duration-500 lg:hidden"
+			></div>
+		{/if}
+
+		<Filter
+			sections={filterSections}
+			{handleFilters}
+			{resetFilter}
+			{clearFilters}
+			bind:isMobileMenuOpen
+		/>
+
+		<style>
+			.custom-scrollbar::-webkit-scrollbar {
+				width: 3px;
+			}
+			.custom-scrollbar::-webkit-scrollbar-thumb {
+				background: #e5e7eb;
+				border-radius: 10px;
+			}
+			/* Prevent body scroll when menu is open */
+			:global(body:has(.translate-y-0)) {
+				overflow: hidden;
+			}
+		</style>
+
+		<button
+			onclick={() => (isMobileMenuOpen = true)}
+			class="fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full border border-stone-400 bg-white/70 px-8 py-4 text-[9px] font-bold tracking-[0.3em] text-stone-900 shadow-xl shadow-black/20 backdrop-blur-sm transition-all duration-300 active:scale-95 lg:hidden"
+			class:opacity-0={isMobileMenuOpen}
+			class:pointer-events-none={isMobileMenuOpen}
 		>
-			<div class="flex w-full items-center border-b-2 border-stone-400 px-4 py-2">
-				<h4 class="text-lg font-semibold">Filters</h4>
-				<div class="ml-auto flex items-center gap-1">
-					<button
-						onclick={clearFilters}
-						class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-red-600"
-					>
-						Clear Filters
-					</button>
+			<Icon icon="ph:sliders-horizontal-bold" class="text-xs" />
+			<span>FILTER</span>
+
+			{#if page.url.searchParams.size > 0}
+				<div class="flex items-center gap-1.5">
+					<span class="h-1 w-1 rounded-full bg-stone-900"></span>
+					<span class="text-[8px] font-medium tracking-normal text-stone-500">
+						({page.url.searchParams.size})
+					</span>
 				</div>
+			{/if}
+		</button>
+
+		<div class="col-span-12 lg:col-span-10">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				{#if loading}
+					{#each Array(8) as _}
+						<div class="border-b border-stone-100 p-8 sm:border-r">
+							<Skeleton class="h-80 w-full rounded-none bg-stone-100" />
+							<div class="mt-6 space-y-2">
+								<Skeleton class="h-4 w-1/3 bg-stone-100" />
+								<Skeleton class="h-6 w-3/4 bg-stone-100" />
+							</div>
+						</div>
+					{/each}
+				{:else if artwork.length === 0}
+					<div
+						class="col-span-full flex w-full flex-col items-center justify-center py-40 text-center"
+					>
+						<p class="font-serif text-2xl text-stone-400 italic">
+							No pieces match your current criteria.
+						</p>
+						<button
+							onclick={clearFilters}
+							class="mt-6 text-[10px] font-bold tracking-[0.2em] text-stone-900 uppercase underline underline-offset-8 transition-colors hover:text-stone-600"
+						>
+							View All Works
+						</button>
+					</div>
+				{:else}
+					{#each artwork as art}
+						<a
+							href={`/shop/${art.id}`}
+							onclick={(e) => {
+								e.preventDefault();
+								handleArtwork(art);
+							}}
+							class="group relative border-b border-stone-100 p-8 transition-colors hover:bg-stone-50 sm:border-r"
+						>
+							<div
+								class="relative flex aspect-[4/5] items-center justify-center overflow-hidden bg-stone-100/50 p-6 transition-all duration-700 group-hover:shadow-2xl"
+							>
+								<img
+									src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
+									alt={art.title}
+									class="h-full w-full object-contain transition-transform duration-1000 group-hover:scale-105"
+								/>
+							</div>
+							<div class="mt-8 text-center sm:text-left">
+								<p class="text-[10px] tracking-[0.2em] text-stone-400 uppercase">Available Work</p>
+								<h3 class="mt-1 text-lg font-medium tracking-tighter text-stone-900 uppercase">
+									{art.title}
+								</h3>
+								<h4 class="mt-1 font-serif text-stone-500 italic">{art.artist}</h4>
+							</div>
+						</a>
+					{/each}
+				{/if}
 			</div>
-			<!-- Color Filter -->
-			<Collapsible.Root open class="">
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
-						<h4 class="text-lg">Color</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('tags', 'color');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each colors as color}
-						<button
-							onclick={() => handleFilters('tags', color.label)}
-							class="flex items-center gap-2 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<div class={`h-5 w-5 rounded border border-stone-400 ${color.color}`}></div>
-							<span>{color.label}</span>
-						</button>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
 
-			<!-- Orientation Filter -->
-			<Collapsible.Root open>
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
-						<h4 class="text-lg">Orientation</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('tags', 'orientation');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each orientation as o}
-						<button
-							onclick={() => handleFilters('tags', o)}
-							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<span>{o}</span>
-						</button>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
-
-			<!-- Size Filter -->
-			<Collapsible.Root open>
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4">
-						<h4 class="text-lg">Size</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('tags', 'size');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each sizes as size}
-						<div
-							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<span>{size}</span>
-						</div>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
-
-			<!-- Artist Filter -->
-			<Collapsible.Root open>
-				<Collapsible.Trigger class="w-full">
-					<div class="flex w-full items-center border-b-2 border-stone-400 p-4 shadow-lg">
-						<h4 class="text-lg">Artist</h4>
-						<div class="ml-auto flex items-center gap-1">
-							<button
-								onclick={(event) => {
-									event.stopPropagation();
-									resetFilter('artist');
-								}}
-								class="cursor-pointer text-right text-sm font-bold duration-150 hover:text-indigo-600"
-							>
-								Reset
-							</button>
-						</div>
-					</div>
-				</Collapsible.Trigger>
-				<Collapsible.Content class="space-y-2 border-b-2 border-stone-400 bg-stone-300 py-4 pb-2">
-					{#each artists as artist}
-						<button
-							onclick={() => handleFilters('artist', artist)}
-							class="flex items-center gap-4 px-4 underline-offset-2 hover:cursor-pointer hover:underline"
-						>
-							<span>{artist}</span>
-						</button>
-					{/each}
-				</Collapsible.Content>
-			</Collapsible.Root>
-		</div>
-
-		<!-- Artwork Grid -->
-		<div
-			class="col-span-12 grid grid-cols-1 border-r-2 border-stone-400 sm:grid-cols-2 md:grid-cols-3 lg:col-span-10 lg:grid-cols-4"
-		>
-			{#if loading}
-				{#each Array(10) as _}
-					<div class="w-full border-r-2 border-b-2 border-stone-400 py-8">
-						<div class="h-80 px-8">
-							<Skeleton class="m-auto h-80 w-full bg-gray-400" />
-						</div>
-						<div class="m-auto w-full px-4 pt-2">
-							<Skeleton class="mb-2 h-6 w-1/2 bg-gray-400" />
-							<Skeleton class="h-8 w-3/4 bg-gray-400" />
-						</div>
-					</div>
-				{/each}
-			{:else if artwork.length === 0}
-				<div
-					class="col-span-4 m-auto w-full py-28 text-center text-3xl md:min-h-[50vh] lg:min-h-screen"
-				>
-					No results found
+			{#if startKey}
+				<div class="flex justify-center border-t border-stone-100 py-20">
+					<Button
+						onclick={handleLoadMore}
+						disabled={loadMoreDisabled}
+						label="Load More Works"
+						loadingText="Loading..."
+					/>
 				</div>
-			{:else}
-				{#each artwork as art}
-					<a
-						href={`/shop/${art.id}`}
-						onclick={() => handleArtwork(art)}
-						class="max-h-[28rem] w-full cursor-pointer border-r-2 border-b-2 border-stone-400 py-8"
-					>
-						<div class="m-auto mx-4 h-80 rounded bg-stone-300 p-6">
-							<img
-								src={`https://africa-curated-public.s3.us-west-1.amazonaws.com/artwork/${art.imageUrl}`}
-								alt={`image of ${art.title} by: ${art.artist}`}
-								class="m-auto h-full bg-transparent object-contain"
-							/>
-						</div>
-						<div class="m-auto w-full px-4 pt-2">
-							<h3 class="text-xl font-semibold text-gray-800">{art.title}</h3>
-							<h4 class="w-fit text-xs font-semibold text-gray-600 uppercase">By: {art.artist}</h4>
-						</div>
-					</a>
-				{/each}
 			{/if}
 		</div>
-
-		<!-- Load More Button -->
-		{#if startKey}
-			<div class="col-span-full grid place-content-center border-t border-stone-400 py-4">
-				<button
-					disabled={loadMoreDisabled}
-					onclick={handleLoadMore}
-					class="cursor-pointer rounded-md border-2 border-indigo-500 bg-indigo-700 px-8 py-2 text-xl font-semibold text-gray-200 duration-150 hover:bg-indigo-600 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-400"
-				>
-					Load More
-				</button>
-			</div>
-		{:else}
-			<div class="col-span-full grid place-content-center border-t border-stone-400 py-8"></div>
-		{/if}
 	</div>
 </section>
+
+<style>
+	/* Styling for the Skeleton pulses to be subtler in stone */
+	:global(.skeleton) {
+		background-color: #f5f5f4 !important;
+	}
+</style>

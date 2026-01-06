@@ -1,108 +1,119 @@
 <script>
-	import Icon from '@iconify/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import Label from './label/label.svelte';
+	import Icon from '@iconify/svelte';
+
+	// Simplified list for footer columns
+	const navLinks = [
+		{ label: 'Shop', href: '/shop' },
+		{ label: 'Collections', href: '/collections' },
+		{ label: 'Artists', href: '/artists' },
+		{ label: 'About Us', href: '/about' },
+		{ label: 'Contact', href: '/contact' }
+	];
 </script>
 
-<footer class="w-full border-t-2 border-stone-400 bg-stone-300">
-	<div class="m-auto grid grid-cols-1 md:grid-cols-3 md:py-8 lg:mx-24">
-		<div class="flex flex-col border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
-			<h5 class="font-semibold">Shop</h5>
-			<a href="/shop" class="group relative py-2">
-				<p class="capitalize">Shop All</p>
-				<span
-					class="absolute bottom-0 h-1 w-16 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-200 group-hover:scale-x-100"
-				></span>
-			</a>
-			<a href="/artist" class="group relative py-2">
-				<p class="capitalize">By Artist</p>
-				<span
-					class="absolute bottom-0 h-1 w-16 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-200 group-hover:scale-x-100"
-				></span>
-			</a>
-			<!-- <a href="/collection" class="group relative">
-				<p class="capitalize">By Collection</p>
-				<span
-					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
-				></span>
-			</a> -->
-		</div>
-		<div class="flex flex-col border-r-2 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
-			<h5 class="font-semibold">Company</h5>
-			<a href="/about" class="group relative py-2">
-				<p class="capitalize">About Us</p>
-				<span
-					class="absolute bottom-0 h-1 w-18 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-200 group-hover:scale-x-100"
-				></span>
-			</a>
-			<!-- <a href="/news" class="group relative">
-				<p class="capitalize">News</p>
-				<span
-					class="absolute top-8 h-1 w-1/2 origin-left scale-x-0 rounded-lg bg-indigo-500 duration-100 group-hover:scale-x-100"
-				></span>
-			</a> -->
-		</div>
-		<div class="flex flex-col gap-4 border-b-2 border-stone-400 px-4 py-2 md:border-b-0">
-			<h5 class="mb-2 font-semibold">Contact</h5>
-			<a href="contact" class="font-semibold underline underline-offset-4">email@email.com</a>
-			<div class="flex flex-col">
-				<span>2618 San Miguel Suite 267</span>
-				<span>Newport Beach, CA 92660</span>
+<footer class="w-full border-t border-stone-200 bg-stone-50 pt-16 pb-8">
+	<div class="mx-auto max-w-7xl px-6 lg:px-12">
+		<div class="grid grid-cols-1 gap-12 md:grid-cols-4 lg:gap-24">
+			<div class="flex flex-col space-y-4">
+				<div class="flex flex-col leading-none">
+					<span class="font-serif text-xl tracking-tighter text-stone-900">Africa Curated</span>
+					<span class="text-[9px] tracking-[0.3em] text-stone-400 uppercase">Art Gallery</span>
+				</div>
+				<p class="font-sans text-sm leading-relaxed text-stone-500">
+					Bridging the narrative of the African experience through universal artistic languages.
+				</p>
 			</div>
 
-			<div class="flex gap-2 md:gap-8">
-				<a href="/facebook">
-					<Icon
-						icon="mdi:facebook"
-						font-size="32"
-						class="text-gray-900 duration-100 hover:text-indigo-500"
-					></Icon>
-				</a>
+			<div class="flex flex-col space-y-4">
+				<h5 class="text-xs font-semibold tracking-[0.2em] text-stone-900 uppercase">Gallery</h5>
+				<nav class="flex flex-col space-y-2">
+					<a
+						href="/shop"
+						class="text-sm tracking-wider text-stone-500 uppercase transition-colors hover:text-stone-900"
+						>Shop All</a
+					>
+					<a
+						href="/collections"
+						class="text-sm tracking-wider text-stone-500 uppercase transition-colors hover:text-stone-900"
+						>Collections</a
+					>
+					<a
+						href="/artists"
+						class="text-sm tracking-wider text-stone-500 uppercase transition-colors hover:text-stone-900"
+						>By Artist</a
+					>
+				</nav>
+			</div>
 
-				<a href="/instagram">
-					<Icon
-						icon="mdi:instagram"
-						font-size="32"
-						class="text-gray-900 duration-100 hover:text-indigo-500"
-					></Icon>
-				</a>
+			<div class="flex flex-col space-y-4">
+				<h5 class="text-xs font-semibold tracking-[0.2em] text-stone-900 uppercase">Company</h5>
+				<nav class="flex flex-col space-y-2">
+					<a
+						href="/about"
+						class="text-sm tracking-wider text-stone-500 uppercase transition-colors hover:text-stone-900"
+						>Our Story</a
+					>
+					<a
+						href="/contact"
+						class="text-sm tracking-wider text-stone-500 uppercase transition-colors hover:text-stone-900"
+						>Contact</a
+					>
+				</nav>
+			</div>
 
-				<a href="/x">
-					<Icon
-						icon="ri:twitter-x-fill"
-						font-size="32"
-						class="text-gray-900 duration-100 hover:text-indigo-500"
-					></Icon>
-				</a>
-				<a href="/pinterest">
-					<Icon
-						icon="mdi:pinterest"
-						font-size="32"
-						class="text-gray-900 duration-100 hover:text-indigo-500"
-					></Icon>
-				</a>
+			<div class="flex flex-col space-y-6">
+				<h5 class="text-xs font-semibold tracking-[0.2em] text-stone-900 uppercase">Connect</h5>
+				<div class="flex flex-col space-y-1 text-sm text-stone-500">
+					<a
+						href="mailto:hello@africacurated.com"
+						class="text-stone-900 underline underline-offset-4 transition-colors hover:text-stone-600"
+					>
+						hello@africacurated.com
+					</a>
+					<p class="pt-2">2618 San Miguel Suite 267</p>
+					<p>Newport Beach, CA 92660</p>
+				</div>
+
+				<div class="flex gap-4">
+					{#each ['mdi:facebook', 'mdi:instagram', 'ri:twitter-x-fill', 'mdi:pinterest'] as icon}
+						<a href="/" class="text-stone-400 transition-colors hover:text-stone-900">
+							<Icon {icon} font-size="24" />
+						</a>
+					{/each}
+				</div>
 			</div>
 		</div>
-		<!-- <div class="flex flex-col gap-4 border-stone-400 px-4 py-2">
-			<h5 class="mb-2 font-semibold">Newsletter</h5>
 
-			<Label>Sign up to our newsletter.</Label>
-			<form class="flex w-full max-w-sm flex-col items-center md:flex-row md:space-x-2">
-				<Input
-					type="email"
-					placeholder="email"
-					class="border-2 border-stone-400 bg-stone-200 placeholder:text-gray-700"
-				/>
-				<Button type="submit" class="mt-2 w-full bg-indigo-600 hover:bg-indigo-500 md:mt-0 md:w-fit"
-					>Subscribe</Button
-				>
-			</form>
-		</div> -->
-	</div>
-	<div class="flex h-12 w-full border-stone-400 md:border-t-2">
-		<span class="m-auto w-full text-center text-xs md:text-base">
-			Copyright, An Art Gallery Company&copy;, 2025 All Rights Reserved.
-		</span>
+		<div class="mt-20 border-t border-stone-200 pt-12">
+			<div class="flex flex-col items-center justify-between gap-8 md:flex-row">
+				<div class="text-center md:text-left">
+					<h5 class="text-sm font-medium text-stone-900">Join our mailing list</h5>
+					<p class="mt-1 text-xs tracking-widest text-stone-400 uppercase">
+						Stay updated on new exhibitions
+					</p>
+				</div>
+				<form class="flex w-full max-w-sm gap-2">
+					<Input
+						type="email"
+						placeholder="Email Address"
+						class="rounded-none border-stone-200 bg-transparent text-sm placeholder:text-stone-400 focus-visible:ring-stone-400"
+					/>
+					<Button
+						type="submit"
+						class="rounded-none bg-stone-900 px-6 text-xs tracking-widest text-white uppercase hover:bg-stone-700"
+					>
+						Join
+					</Button>
+				</form>
+			</div>
+		</div>
+
+		<div class="mt-16 text-center">
+			<span class="text-[10px] tracking-[0.2em] text-stone-400 uppercase">
+				&copy; 2025 Africa Curated. All rights reserved.
+			</span>
+		</div>
 	</div>
 </footer>
